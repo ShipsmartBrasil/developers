@@ -169,6 +169,8 @@ curl --request POST \
 ### Atualizar remessa
 - Método e rota: `PUT /v1/shipping/{shipping}`
 - Use para anexar documento e/ou vincular NF-e em caso excepcional.
+- Os arquivos anexados devem estar em `base64` e aceitar apenas `PDF`, `XML`, `JPEG` ou `PNG`.
+- O tamanho máximo é de `5 MB` por arquivo.
 
 #### Exemplo de request
 ```bash
