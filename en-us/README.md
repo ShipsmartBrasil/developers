@@ -1,14 +1,23 @@
 # Technical Integration Guide
 
 ## Languages
-- [Português (Brasil)](../README.md)
 - [English (US)](README.md)
-- [Español (ES)](../es-es/README.md)
-- [Français (FR)](../fr-fr/README.md)
-- [Italiano (IT)](../it-it/README.md)
+- [Portuguese (Brazil)](../pt-br/README.md)
+- [Spanish (ES)](../es-es/README.md)
+- [French (FR)](../fr-fr/README.md)
+- [Italian (IT)](../it-it/README.md)
 
-## Guide
-- [Overview](guide.md)
-
-## Notes
-- This folder contains the English navigation entry for the API documentation.
+## Index
+- [Quote](api-cotacao-v1.md)
+- [Quote V2](api-cotacao-v2.md)
+- [Shipment](api-remessa-v1.md)
+- [Shipment V2](api-remessa-v2.md)
+- [Quote & Shipment Comparison: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Shipment Documents](api-documentos.md)
+- [Shipment Tracking](api-rastreio.md)
+- [Pickup Scheduling](api-agendamento.md)
+- [Manifest](api-manifesto.md)
+- [Draft](api-rascunho.md)
+- [Box](api-caixa-v1.md)
+- [Items](api-itens-v1.md)
+- [Contract](api-contrato-v1.md)

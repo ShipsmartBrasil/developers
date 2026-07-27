@@ -1,8 +1,8 @@
 # Guia de Integração Técnico
 
 ## Idiomas
-- [Português (Brasil)](../README.md)
-- [English (US)](../en-us/README.md)
+- [English (US)](../README.md)
+- [Português (Brasil)](README.md)
 - [Español (ES)](../es-es/README.md)
 - [Français (FR)](../fr-fr/README.md)
 - [Italiano (IT)](../it-it/README.md)
@@ -21,6 +21,3 @@
 - [Caixa](api-caixa-v1.md)
 - [Itens](api-itens-v1.md)
 - [Contrato](api-contrato-v1.md)
-
-## Observação
-- Esta pasta concentra a documentação detalhada em português do Brasil.
