@@ -1,43 +1,43 @@
-# Guia de Integração Técnico
+# Technical Integration Guide
 
-## Idiomas
-- [Português (Brasil)](README.md)
+## Languages
+- [Portuguese (Brazil)](README.md)
 - [English (US)](en-us/README.md)
-- [Español (ES)](es-es/README.md)
-- [Français (FR)](fr-fr/README.md)
-- [Italiano (IT)](it-it/README.md)
+- [Spanish (ES)](es-es/README.md)
+- [French (FR)](fr-fr/README.md)
+- [Italian (IT)](it-it/README.md)
 
-## Acesso
-- Documentação: `https://api.shipsmart.global/docs`
+## Access
+- Documentation: `https://api.shipsmart.global/docs`
 - Base URL: `https://api.shipsmart.global`
-- Homologação: `https://hmlapi.shipsmart.com.br`
+- Staging: `https://hmlapi.shipsmart.com.br`
 
-## Índice PT-BR
-- [Cotação](pt-br/api-cotacao-v1.md)
-- [Cotação V2](pt-br/api-cotacao-v2.md)
-- [Remessa](pt-br/api-remessa-v1.md)
-- [Remessa V2](pt-br/api-remessa-v2.md)
-- [Comparativo Cotação & Remessa: v1 vs v2](pt-br/api-comparativo-cotacao-remessa.md)
-- [Documentos de Remessa](pt-br/api-documentos.md)
-- [Rastreio de Remessa](pt-br/api-rastreio.md)
-- [Agendamento de Coleta](pt-br/api-agendamento.md)
-- [Manifesto](pt-br/api-manifesto.md)
-- [Rascunho](pt-br/api-rascunho.md)
-- [Caixa](pt-br/api-caixa-v1.md)
-- [Itens](pt-br/api-itens-v1.md)
-- [Contrato](pt-br/api-contrato-v1.md)
+## PT-BR Index
+- [Quote](pt-br/api-cotacao-v1.md)
+- [Quote V2](pt-br/api-cotacao-v2.md)
+- [Shipment](pt-br/api-remessa-v1.md)
+- [Shipment V2](pt-br/api-remessa-v2.md)
+- [Quote & Shipment Comparison: v1 vs v2](pt-br/api-comparativo-cotacao-remessa.md)
+- [Shipment Documents](pt-br/api-documentos.md)
+- [Shipment Tracking](pt-br/api-rastreio.md)
+- [Pickup Scheduling](pt-br/api-agendamento.md)
+- [Manifest](pt-br/api-manifesto.md)
+- [Draft](pt-br/api-rascunho.md)
+- [Box](pt-br/api-caixa-v1.md)
+- [Items](pt-br/api-itens-v1.md)
+- [Contract](pt-br/api-contrato-v1.md)
 
-## Como usar
-1. Comece por [Cotação](pt-br/api-cotacao-v1.md) ou [Cotação V2](pt-br/api-cotacao-v2.md).
-2. Siga para [Remessa](pt-br/api-remessa-v1.md) ou [Remessa V2](pt-br/api-remessa-v2.md).
-3. Leia o [comparativo entre cotação & remessa: v1 vs v2](pt-br/api-comparativo-cotacao-remessa.md).
-4. Consulte [Documentos de Remessa](pt-br/api-documentos.md).
-5. Consulte o [Rastreio da Remessa](pt-br/api-rastreio.md).
-6. Use [Agendamento da Coleta](pt-br/api-agendamento.md).
-7. Use [Manifesto](pt-br/api-manifesto.md) quando precisar de geração síncrona.
-8. Cadastre [Caixas](pt-br/api-caixa-v1.md) e [Itens](pt-br/api-itens-v1.md).
-9. Consulte os [Contratos](pt-br/api-contrato-v1.md).
+## How to Use
+1. Start with [Quote](pt-br/api-cotacao-v1.md) or [Quote V2](pt-br/api-cotacao-v2.md).
+2. Move on to [Shipment](pt-br/api-remessa-v1.md) or [Shipment V2](pt-br/api-remessa-v2.md).
+3. Read the [quote & shipment comparison: v1 vs v2](pt-br/api-comparativo-cotacao-remessa.md).
+4. Check [Shipment Documents](pt-br/api-documentos.md).
+5. Check [Shipment Tracking](pt-br/api-rastreio.md).
+6. Use [Pickup Scheduling](pt-br/api-agendamento.md).
+7. Use [Manifest](pt-br/api-manifesto.md) when you need synchronous generation.
+8. Register [Boxes](pt-br/api-caixa-v1.md) and [Items](pt-br/api-itens-v1.md).
+9. Review [Contracts](pt-br/api-contrato-v1.md).
 
-## Observação
-- A documentação está organizada por fluxo para facilitar a integração externa.
-- Quando houver divergência entre exemplos e regras, a fonte de verdade é o código analisado.
+## Note
+- The documentation is organized by flow to make external integration easier.
+- When examples and rules differ, the source of truth is the analyzed code.
