@@ -4,6 +4,7 @@
 
 ## Vue d'ensemble
 - Consulte l'état opérationnel et l'historique d'une expédition.
+- Montre la réception, le paiement, le traitement, le transport et l'annulation.
 
 ## Formats de réponse
 - Le même endpoint renvoie `timeline` et `status`.

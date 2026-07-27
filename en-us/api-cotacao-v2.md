@@ -34,3 +34,9 @@
 - v2 explicitly documents `items` as a quote type.
 - v2 simplifies address fields in the public contract.
 - The detailed result is returned in the `POST` response itself.
+
+### Summary fields
+- `object`: `doc`, `package`, `pallet`, `not_doc`
+- `type`: `simple`, `advanced`, `items`
+- `tax`: `sender` or `receiver`
+- `measurement`: `metric` or `imperial`

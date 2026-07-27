@@ -4,6 +4,7 @@
 
 ## Panoramica
 - Consulta lo stato operativo e lo storico di una spedizione.
+- Mostra ricezione, pagamento, elaborazione, trasporto e cancellazione.
 
 ## Formati di risposta
 - Lo stesso endpoint restituisce `timeline` e `status`.

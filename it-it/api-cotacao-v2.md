@@ -4,6 +4,15 @@
 
 ## Panoramica
 - Genera quotazioni con contratto semplificato per nuove integrazioni.
+- Usala quando serve solo creare la quotazione v2.
+
+## Base URL
+- Produzione: `https://api.shipsmart.global`
+- Documentazione: `https://api.shipsmart.global/docs`
+- Omologazione: `https://hmlapi.shipsmart.com.br`
+
+## Autenticazione
+- Bearer token in `Authorization`.
 
 ## Endpoint
 - `POST /v2/quotation`

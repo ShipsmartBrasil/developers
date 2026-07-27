@@ -7,4 +7,4 @@
 
 ## Regla de uso
 - El flujo estándar usa los endpoints de la primera versión.
-- La segunda versión es para cotización más simple, con menos datos iniciales.
+- La segunda versión sirve para una cotización más simple, con menos datos iniciales.

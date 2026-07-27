@@ -4,6 +4,11 @@
 
 ## Vue d'ensemble
 - Crée, consulte et annule les planifications de collecte liées à l'expédition.
+- La collecte peut être faite par la cotation/expédition ou par AWB.
+
+## Conventions
+- Dates au format `Y-m-d`.
+- Heures au format `H:i:s`.
 
 ## Endpoints
 - `POST /v1/schedule`

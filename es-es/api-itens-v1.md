@@ -5,6 +5,11 @@
 ## Visión general
 - Gestiona ítems para cotizaciones, borradores y remesas.
 
+## Convenciones
+- `Content-Type: application/json`
+- La consulta usa `items[skus][]`.
+- Alta/actualización/eliminación son asíncronas.
+
 ## Endpoints
 - `GET /v1/item`
 - `POST /v1/item`
