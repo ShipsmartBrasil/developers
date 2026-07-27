@@ -1,11 +1,7 @@
 # Guida Tecnica di Integrazione
 
-## Lingue
-- [English (US)](../README.md)
-- [Português (Brasil)](../pt-br/README.md)
-- [Español (ES)](../es-es/README.md)
-- [Français (FR)](../fr-fr/README.md)
-- [Italiano (IT)](README.md)
+## Menu Principale
+- [Torna al README principale](../README.md)
 
 ## Indice
 - [Preventivo](api-cotacao-v1.md)
