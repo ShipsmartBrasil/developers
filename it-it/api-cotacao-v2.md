@@ -1,5 +1,7 @@
 # Quotazione V2
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Genera quotazioni con contratto semplificato per nuove integrazioni.
 

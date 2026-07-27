@@ -1,5 +1,7 @@
 # Comparativo Cotação e Remessa
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Explica a diferença prática entre os fluxos de cotação e remessa nas duas versões publicadas.
 - Use este guia para escolher a versão correta antes de integrar.

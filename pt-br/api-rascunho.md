@@ -1,5 +1,7 @@
 # Rascunho
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Cria, lista, atualiza e remove rascunhos de envio.
 - O rascunho é processado assíncronamente e pode evoluir para cotação + remessa.

@@ -1,5 +1,7 @@
 # Comparativo de cotización y remesa
 
+- [Volver al README del idioma](README.md)
+
 ## Visión general
 - Explica la diferencia práctica entre los flujos de cotización y remesa en las dos versiones publicadas.
 

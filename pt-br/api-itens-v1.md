@@ -1,5 +1,7 @@
 # Itens
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Gerencia itens cadastrados para uso em cotações, rascunhos e remessas.
 - Os itens podem ser consultados, criados, atualizados e removidos em lote.

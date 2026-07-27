@@ -1,5 +1,7 @@
 # Manifest
 
+- [Back to English README](README.md)
+
 ## Overview
 - Executes the synchronous quote + shipment flow.
 - May return the final operation documents after creation.

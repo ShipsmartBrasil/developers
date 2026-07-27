@@ -1,5 +1,7 @@
 # Cotation V2
 
+- [Retour au README de la langue](README.md)
+
 ## Vue d'ensemble
 - Génère des cotations avec un contrat simplifié pour les nouvelles intégrations.
 

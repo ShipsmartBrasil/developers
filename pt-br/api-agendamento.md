@@ -1,5 +1,7 @@
 # Agendamento de Coleta
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Cria, consulta e cancela agendamentos de coleta vinculados à remessa.
 - A coleta pode ser feita pela cotação/remessa ou por AWB.

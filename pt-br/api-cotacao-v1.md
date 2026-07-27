@@ -1,5 +1,7 @@
 # Cotação
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Gera cotações internacionais com detalhamento de frete, seguro e impostos.
 - Use quando precisar simular o envio antes de criar a remessa.

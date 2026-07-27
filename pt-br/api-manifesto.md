@@ -1,5 +1,7 @@
 # Manifesto
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Executa o fluxo síncrono de cotação + remessa.
 - Após a criação, pode retornar os documentos finais da operação.

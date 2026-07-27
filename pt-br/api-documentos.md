@@ -1,5 +1,7 @@
 # Documentos de Remessa
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Consulta documentos gerados após o processamento da remessa.
 - Pode retornar PDF, ZPL, anexos e, quando permitido, documentos incorporados.

@@ -1,5 +1,7 @@
 # Articles
 
+- [Retour au README de la langue](README.md)
+
 ## Vue d'ensemble
 - Gère les articles utilisés dans les cotations, brouillons et expéditions.
 

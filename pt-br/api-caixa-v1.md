@@ -1,5 +1,7 @@
 # Caixa
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Gerencia o cadastro e a consulta de caixas usadas em cotações, rascunhos e remessas.
 - Use para padronizar dimensões, peso e identificação das embalagens.

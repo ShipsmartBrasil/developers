@@ -1,5 +1,7 @@
 # Cotización V2
 
+- [Volver al README del idioma](README.md)
+
 ## Visión general
 - Genera cotizaciones con un contrato simplificado para integraciones nuevas.
 - Úsala cuando solo necesites crear la cotización v2.

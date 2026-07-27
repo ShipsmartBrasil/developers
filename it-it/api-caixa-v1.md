@@ -1,5 +1,7 @@
 # Scatola
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Gestisce la registrazione e la consultazione delle scatole usate in quotazioni, bozze e spedizioni.
 

@@ -1,5 +1,7 @@
 # Programmazione ritiro
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Crea, consulta e annulla le programmazioni di ritiro collegate alla spedizione.
 

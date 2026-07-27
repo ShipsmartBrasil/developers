@@ -1,5 +1,7 @@
 # Articoli
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Gestisce gli articoli usati in quotazioni, bozze e spedizioni.
 

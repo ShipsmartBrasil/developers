@@ -1,5 +1,7 @@
 # Manifesto
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Esegue il flusso sincrono quotazione + spedizione.
 

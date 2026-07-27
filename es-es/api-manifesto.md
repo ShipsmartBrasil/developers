@@ -1,5 +1,7 @@
 # Manifiesto
 
+- [Volver al README del idioma](README.md)
+
 ## Visión general
 - Ejecuta el flujo síncrono de cotización + remesa.
 

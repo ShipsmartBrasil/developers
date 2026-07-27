@@ -1,5 +1,7 @@
 # Items
 
+- [Back to English README](README.md)
+
 ## Overview
 - Manages items used in quotes, drafts, and shipments.
 - Items can be queried, created, updated, and deleted in bulk.

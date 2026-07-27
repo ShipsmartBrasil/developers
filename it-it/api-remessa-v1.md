@@ -1,5 +1,7 @@
 # Spedizione
 
+- [Torna al README della lingua](README.md)
+
 ## Panoramica
 - Crea, aggiorna, annulla e consulta le spedizioni.
 - Espone anche documenti e tracking.

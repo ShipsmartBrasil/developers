@@ -1,5 +1,7 @@
 # Planification de collecte
 
+- [Retour au README de la langue](README.md)
+
 ## Vue d'ensemble
 - Crée, consulte et annule les planifications de collecte liées à l'expédition.
 

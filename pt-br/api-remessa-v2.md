@@ -1,5 +1,7 @@
 # Remessa V2
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Cria remessas com contrato simplificado.
 - A v2 não expõe, na fonte analisada, endpoints de status, documentos, cancelamento ou atualização.

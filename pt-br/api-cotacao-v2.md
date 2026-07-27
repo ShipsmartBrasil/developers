@@ -1,5 +1,7 @@
 # Cotação V2
 
+- [Voltar ao README do idioma](README.md)
+
 ## Visão geral
 - Gera cotações com contrato simplificado para integrações novas.
 - Use quando você quiser apenas criar a cotação na v2.
