@@ -9,6 +9,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.
@@ -193,11 +194,7 @@ curl --request POST \
 | `406` | Estrutura incompatível | Revisar payload e versão |
 | `500` | Erro inesperado | Acionar o time responsável |
 
-## Diferenças entre v1 e v2
-| Endpoint | Principais diferenças | Campos alterados | Campos removidos | Campos adicionados | Impacto legado |
-|---|---|---|---|---|---|
-| `POST /quotation` | v2 expõe `items` de forma explícita | Endereços mais enxutos no contrato | `state`/`postal_code` menos evidentes no OpenAPI | `items.ean` | Integração nova deve seguir v2 |
-
 ## Observações finais
 - A documentação OpenAPI da v2 e a validação de request não são idênticas em todos os detalhes. Validar com o time responsável pela API.
 - Para consulta detalhada da cotação, a fonte analisada não traz endpoint v2 equivalente ao `GET /v1/quotation/{quotation}/{level}`.
+- Todas as ações de cotação e remessa na segunda versão podem ser acompanhadas pelas outras APIs da primeira versão.

@@ -8,6 +8,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.
@@ -201,13 +202,13 @@
 
 ## Regras de negócio
 - O manifesto só funciona com pagamento faturado.
-- O documento final pode ser PDF, ZPL ou ambos, conforme o fluxo e a transportadora.
+- O documento final pode ser PDF, ZPL ou ambos, conforme o fluxo e o transportador.
 - Se a cotação for incompatível com a versão, a execução falha.
 
 ## Erros comuns
 | Status | Significado | Como corrigir |
 |---|---|---|
-| `400` | Erro do transportador ou regra de negócio | Ajustar payload ou verificar retorno da transportadora |
+| `400` | Erro do transportador ou regra de negócio | Ajustar payload ou verificar retorno do transportador |
 | `422` | Validação | Corrigir campos obrigatórios |
 | `500` | Erro inesperado | Acionar o time responsável |
 

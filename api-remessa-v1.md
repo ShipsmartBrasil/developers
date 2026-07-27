@@ -7,6 +7,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.
@@ -32,6 +33,8 @@
 - A remessa não pode ter sido criada anteriormente para a mesma cotação.
 - O tipo de pagamento precisa estar habilitado para o usuário.
 - Para DHL com remetente PJ no Brasil, `nfkey` pode ser obrigatória.
+- Depois de criada, a remessa é irreversível na operação normal.
+- Alterações posteriores só são admitidas em casos excepcionais: envio do número da nota fiscal quando ele não foi informado e envio de documentos para anexar à remessa quando eles não foram enviados durante a criação.
 
 ## Endpoints
 ### Criar remessa
@@ -165,7 +168,7 @@ curl --request POST \
 
 ### Atualizar remessa
 - Método e rota: `PUT /v1/shipping/{shipping}`
-- Use para anexar documento e/ou vincular NF-e.
+- Use para anexar documento e/ou vincular NF-e em caso excepcional.
 
 #### Exemplo de request
 ```bash
@@ -276,11 +279,6 @@ curl --request GET \
 | `404` | Recurso não encontrado | Confirmar o identificador informado |
 | `422` | Validação | Corrigir payload |
 | `500` | Erro inesperado | Acionar o time responsável |
-
-## Diferenças entre versões
-| Endpoint | Principais diferenças | Campos alterados | Campos removidos | Campos adicionados | Impacto legado |
-|---|---|---|---|---|---|
-| `POST /shipping` | A primeira versão possui status, docs, update, cancel e delete docs | `payment.type` aceita mais fluxos | - | `attachments`, `biller` | Cobre o ciclo completo |
 
 ## Observações finais
 - A remessa v1 é o ponto de integração mais completo do ciclo operacional.

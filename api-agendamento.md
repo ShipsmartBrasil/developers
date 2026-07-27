@@ -8,6 +8,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.

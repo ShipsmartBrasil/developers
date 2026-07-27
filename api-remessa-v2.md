@@ -8,6 +8,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.
@@ -174,10 +175,6 @@ curl --request POST \
 | `400` | Regra de negócio | Verificar elegibilidade da cotação e do pagamento |
 | `500` | Erro inesperado | Acionar o time responsável |
 
-## Diferenças entre v1 e v2
-| Endpoint | Principais diferenças | Campos alterados | Campos removidos | Campos adicionados | Impacto legado |
-|---|---|---|---|---|---|
-| `POST /shipping` | v2 mantém só a criação no contrato publicado | Endereços mais completos no request | Endpoints de status/docs/cancelamento não aparecem na v2 | `attachments` com regra própria | Integração nova tende a ficar mais restrita |
-
 ## Observações finais
 - A v2 documentada na fonte é enxuta; para suporte operacional de documentos e rastreio, a fonte analisada aponta para a v1.
+- Todas as ações de cotação e remessa na segunda versão podem ser acompanhadas pelas outras APIs da primeira versão.

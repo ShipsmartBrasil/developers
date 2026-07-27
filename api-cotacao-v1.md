@@ -7,6 +7,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Tipo: Bearer token.
@@ -277,12 +278,6 @@ curl --request GET \
   }
 }
 ```
-
-## Diferenças entre versões
-| Endpoint | Principais diferenças | Campos alterados | Campos removidos | Campos adicionados | Impacto legado |
-|---|---|---|---|---|---|
-| `POST /v1/quotation` | Contrato mais permissivo na fonte | `type` aparece como `simple/advanced` no Swagger, mas a validação aceita `items` | - | `channel_order_number` | Atenção à divergência entre Swagger e validação |
-| `GET /v1/quotation/{quotation}/{level}` | Disponível na primeira versão | `level` no path | - | - | Fluxo de consulta legado |
 
 ## Observações finais
 - A resposta pode trazer `warnings` quando houver alertas de cadastro ou de transporte.

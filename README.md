@@ -1,8 +1,9 @@
-# Documentação da API
+# Guia de Integração Técnico
 
 ## Acesso
 - Documentação: `https://api.shipsmart.global/docs`
 - Base URL: `https://api.shipsmart.global`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Menu
 
@@ -11,7 +12,7 @@
 - [Cotação V2](api-cotacao-v2.md)
 - [Remessa](api-remessa-v1.md)
 - [Remessa V2](api-remessa-v2.md)
-- [Comparativo Cotação e Remessa](api-comparativo-cotacao-remessa.md)
+- [Comparativo Cotação & Remessa: v1 vs v2](api-comparativo-cotacao-remessa.md)
 - [Documentos de Remessa](api-documentos.md)
 - [Rastreio de Remessa](api-rastreio.md)
 - [Agendamento de Coleta](api-agendamento.md)

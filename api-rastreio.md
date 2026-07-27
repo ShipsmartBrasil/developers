@@ -8,6 +8,7 @@
 ## Base URL
 - Produção: `https://api.shipsmart.global`
 - Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticação
 - Bearer token no header `Authorization`.
@@ -16,6 +17,11 @@
 ## Convenções
 - O campo `shipping` aceita UUID, AWB ou NF-e, conforme o endpoint.
 - Os status usam códigos internos como `RCV0001`, `PPY0001`, `SPD0001`, `CCG0001` e `CCD0001`.
+
+## Formatos de resposta
+- O mesmo endpoint retorna dois formatos: `timeline` e `status`.
+- `timeline` traz os eventos na ordem em que chegam do transportador.
+- `status` traz os eventos agrupados por status, usando o de/para interno da plataforma para simplificar a leitura.
 
 ## Fluxo de uso
 1. Crie a remessa.
@@ -85,3 +91,4 @@ curl --request GET \
 ## Observações finais
 - O rastreio é a forma mais completa de monitorar a vida útil do envio.
 - A timeline é derivada dos eventos internos e do retorno do pagamento/transportador.
+- O agrupamento de status é um resumo operacional para facilitar o entendimento do rastreio da remessa.
