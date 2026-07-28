@@ -1,10 +1,11 @@
-# Shipment Documents
+# Shipping Documents
 
-- [Back to English README](README.md)
+- [Back to language README](README.md)
 
 ## Overview
 - Retrieves documents generated after shipment processing.
-- Can return PDF, ZPL, attachments, and, when allowed, embedded documents.
+- May return PDF, ZPL, attachments, and, when allowed, embedded documents.
+- This module is published in v1.
 
 ## Base URL
 - Production: `https://api.shipsmart.global`
@@ -12,52 +13,53 @@
 - Staging: `https://hmlapi.shipsmart.com.br`
 
 ## Authentication
-- Bearer token in `Authorization`.
+- Bearer token in the `Authorization` header.
 - Language header: `lang`.
 
 ## Conventions
-- `attachments`, `embedded`, and `base64` accept booleans in the query string.
-- `documents` accepts a comma-separated list.
+- `attachments`, `embedded`, and `base64` accept booleans through the query string.
+- `documents` receives a comma-separated list.
 
 ## Usage Flow
 1. Create the shipment.
-2. Wait until processing is complete.
-3. Query documents by `shipping` or by channel.
-4. Download content via `url` or `base64`.
+2. Wait for the status to indicate processing/completion.
+3. Retrieve the documents by `shipping` or by channel.
+4. Download the content in `url` or `base64`.
 
 ## Endpoints
-### Query by shipment
-- `GET /v1/shipping/{shipping}/docs`
+### Retrieve documents by shipment
+- Method and route: `GET /v1/shipping/{shipping}/docs`
+- `shipping` accepts quotation UUID, AWB, or NF-e.
 
-### Query by channel
-- `GET /v1/shipping/docs/{channel_identifier_number}/{channel_code?}`
+### Retrieve documents by channel
+- Method and route: `GET /v1/shipping/docs/{channel_identifier_number}/{channel_code?}`
 
 ### Parameters
 | Name | Location | Type | Required | Description | Example | Notes |
 |---|---|---:|---:|---|---|---|
-| `shipping` | path | string | yes | Shipment identifier | `9c06fd75-d5f4-40eb-a1a8-f12086f49944` | Accepts quote UUID, AWB, and NF-e |
+| `shipping` | path | string | yes | Shipment identifier | `9c06fd75-d5f4-40eb-a1a8-f12086f49944` | Also accepts AWB and NF-e |
 | `channel_identifier_number` | path | string | yes | Channel identifier | `334455` | - |
 | `channel_code` | path | integer | no | Channel code | `1` | Optional |
-| `attachments` | query | boolean | no | Include attachments | `true` | Default `true` |
-| `embedded` | query | boolean | no | Include embedded docs | `true` | Default `true` |
-| `base64` | query | boolean | no | Include base64 | `true` | Default `true` |
-| `documents` | query | string | no | Filter documents | `invoice_pdf,awb_pdf` | Empty returns everything |
+| `attachments` | query | boolean | no | Includes attachments | `true` | Default `true` |
+| `embedded` | query | boolean | no | Includes embedded docs | `true` | Default `true` |
+| `base64` | query | boolean | no | Includes base64 | `true` | Default `true` |
+| `documents` | query | string | no | Filters documents | `invoice_pdf,awb_pdf` | When empty, returns everything |
 
-### Example request
+### Request example
 ```bash
 curl --request GET \
   --url 'https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944/docs?attachments=true&embedded=true&base64=true&documents=invoice_pdf,awb_pdf' \
-  --header 'Authorization: Bearer YOUR_TOKEN' \
-  --header 'lang: en'
+  --header 'Authorization: Bearer SEU_TOKEN' \
+  --header 'lang: pt'
 ```
 
-### Example response
+### Response example
 ```json
 {
   "status": "success",
-  "message": "Shipment documents found!",
+  "message": "Documentos da remessa encontrado!",
   "data": {
-    "carrier": "DHL - Test",
+    "carrier": "DHL - Teste",
     "tracking_id": "000000",
     "docs": {
       "Invoice": {
@@ -73,7 +75,7 @@ curl --request GET \
       { "type": "pdf", "base64": "string" }
     ],
     "attachments": [
-      { "id": 1, "type": "pdf", "description": "Invoice", "base64": "string" }
+      { "id": 1, "type": "pdf", "description": "Nota Fiscal", "base64": "string" }
     ]
   }
 }
@@ -81,15 +83,15 @@ curl --request GET \
 
 ## Business Rules
 - If there are no documents or attachments, the API may return `warning`.
-- Embedded documents depend on specific permission.
-- Filterable document types are the ones listed in the shipment response.
+- Embedded documents depend on a specific permission.
+- The filterable document types are those listed in the shipment response.
 
 ## Common Errors
-| Status | Meaning | Fix |
+| Status | Meaning | How to Fix |
 |---|---|---|
-| `400` | No documents found | Confirm the shipment has already been processed |
+| `400` | No document found | Confirm whether the shipment has already been processed |
 | `500` | Unexpected error | Retry and contact the responsible team |
 
 ## Final Notes
-- Querying by `shipping` is the most direct approach for integrations.
-- Querying by channel is useful when the integrator stores the commercial identifier in the shipment.
+- For integrations, retrieval by `shipping` is the most direct approach.
+- Retrieval by channel is useful when the integrator stores the commercial identifier in the shipment.

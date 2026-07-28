@@ -1,63 +1,64 @@
-# Remesa
+# Envío
 
 - [Volver al README del idioma](README.md)
 
 ## Visión general
-- Crea, actualiza, cancela y consulta remesas.
-- También expone documentos y estado/rastreo.
+- Crea, actualiza, cancela y consulta envíos.
+- También expone consulta de documentos y status/seguimiento.
 - Es la versión legada más completa del flujo de shipping.
-
 ## Base URL
-- Producción: `https://api.shipsmart.global`
-- Documentación: `https://api.shipsmart.global/docs`
-- Homologación: `https://hmlapi.shipsmart.com.br`
+- Produção: `https://api.shipsmart.global`
+- Documentação: `https://api.shipsmart.global/docs`
+- Homologação: `https://hmlapi.shipsmart.com.br`
 
 ## Autenticación
-- Bearer token en `Authorization`.
-- Idioma opcional: `lang`.
+- Bearer token en el header `Authorization`.
+- Header opcional de idioma: `lang`.
 
-## Convenciones
+## Convenções
 - `Content-Type: application/json`
-- La remesa usa `quotation` como vínculo con la cotización.
-- La `quotation` debe pertenecer a la misma versión de API.
-- `payment.type` define el modelo financiero.
+- El envío usa `quotation` como vínculo con la cotización.
+- El `quotation` debe ser de la misma versión de la API de envío.
+- `payment.type` define el modelo financiero del envío.
 
 ## Flujo de uso
-1. Genera la cotización.
-2. Verifica si es elegible para remesa.
-3. Envía la remesa con el `quotation` devuelto.
-4. Consulta `status` hasta el procesamiento.
-5. Descarga documentos en `/docs`.
-6. Si es necesario, agenda la recogida.
+1. Genere la cotización.
+2. Verifique si es elegible para envío.
+3. Envíe el envío con el `quotation` retornado.
+4. Consulte `status` hasta que el envío sea procesado.
+5. Descargue los documentos en `/docs`.
+6. Si es necesario, programe recolección.
 
 ## Reglas de negocio
-- `package`/`pallet` con tipo `simple` no son elegibles.
-- La cotización no puede estar vencida.
-- La remesa no puede existir previamente para la misma cotización.
+- Cotización `package`/`pallet` con tipo `simple` no es elegible para envío.
+- La cotización no puede estar expirada.
+- El envío no puede haber sido creado anteriormente para la misma cotización.
 - El tipo de pago debe estar habilitado para el usuario.
-- Una vez creada, la remesa es irreversible en operación normal.
-- Los cambios posteriores solo se admiten en casos excepcionales.
+- Para DHL con remitente PJ en Brasil, `nfkey` puede ser obligatoria.
+- Después de creado, el envío es irreversible en la operación normal.
+- Cambios posteriores solo se admiten en casos excepcionales: envío del número de la nota fiscal cuando no fue informado y envío de documentos para anexar al envío cuando no fueron enviados durante la creación.
 
 ## Endpoints
-### Crear remesa
-- `POST /v1/shipping`
+### Crear envío
+- Método y ruta: `POST /v1/shipping`
+- Cuándo usar: después de obtener una cotización elegible.
 
-### Parámetros
-| Nombre | Ubicación | Tipo | Obligatorio | Descripción | Ejemplo | Observaciones |
+#### Parámetros
+| Nombre | Local | Tipo | Obligatorio | Descripción | Ejemplo | Observaciones |
 |---|---|---:|---:|---|---|---|
-| `quotation` | body | string | sí | ID de la cotización | `9c06fd75-d5f4-40eb-a1a8-f12086f49944` | Debe ser de v1 |
+| `quotation` | body | string | sí | ID de la cotización | `9c06fd75-d5f4-40eb-a1a8-f12086f49944` | Debe ser de la primera versión |
 | `carrier_code` | body | integer | sí | Contrato/transportador | `1` | Debe existir para la cotización |
-| `address_sender` | body | object | sí | Remitente | - | Manual o `address_code` |
-| `address_receiver` | body | object | sí | Destinatario | - | Manual o `address_code` |
+| `address_sender` | body | object | sí | Remitente | - | Puede usar `address_code` o campos manuales |
+| `address_receiver` | body | object | sí | Destinatario | - | Puede usar `address_code` o campos manuales |
 | `payment.type` | body | string | sí | Tipo de pago | `billed` | `billed`, `gateway`, `afterward` |
-| `type` | body | string | no | Finalidad | `Commercial` | Opcional |
+| `type` | body | string | no | Finalidad del envío | `Commercial` | Opcional |
 | `nfkey` | body | string | no | Clave NF-e | `12345678901234567890123456789012345678901234` | 44 dígitos |
-| `invoice_number` | body | string | no | Número de factura | `NF-123` | Si no se envía, usa el código interno |
-| `shipment_reference` | body | string | no | Referencia | `REF-2024-01` | Si no se envía, usa el ID interno |
+| `invoice_number` | body | string | no | Número de la factura | `NF-123` | Si no se envía, usa el código interno |
+| `shipment_reference` | body | string | no | Referencia del envío | `REF-2024-01` | Si no se envía, usa el ID interno |
 | `attachments` | body | array | no | Anexos | - | PDF, XML, JPEG, PNG |
-| `biller` | body | object | no | Facturador | - | Usado en la invoice |
+| `biller` | body | object | no | Facturante | - | Usado en la invoice |
 
-### Payload mínimo
+#### Payload mínimo
 ```json
 {
   "quotation": "9c06fd75-d5f4-40eb-a1a8-f12086f49944",
@@ -82,7 +83,7 @@
 }
 ```
 
-### Payload máximo
+#### Payload máximo
 ```json
 {
   "quotation": "9c06fd75-d5f4-40eb-a1a8-f12086f49944",
@@ -97,7 +98,9 @@
       "base64": "JVBERi0xLjcK..."
     }
   ],
-  "address_sender": { "address_code": 1 },
+  "address_sender": {
+    "address_code": 1
+  },
   "address_receiver": {
     "street": "Main Avenue",
     "number": "33",
@@ -121,17 +124,19 @@
     "type": "pj",
     "foreign": false
   },
-  "payment": { "type": "gateway" }
+  "payment": {
+    "type": "gateway"
+  }
 }
 ```
 
-### Ejemplo de request
+#### Ejemplo de request
 ```bash
 curl --request POST \
   --url https://api.shipsmart.global/v1/shipping \
   --header 'Authorization: Bearer SEU_TOKEN' \
   --header 'Content-Type: application/json' \
-  --header 'lang: es' \
+  --header 'lang: pt' \
   --data '{
     "quotation": "9c06fd75-d5f4-40eb-a1a8-f12086f49944",
     "carrier_code": 1,
@@ -141,37 +146,64 @@ curl --request POST \
   }'
 ```
 
-### Ejemplo de respuesta
+#### Ejemplo de response
 ```json
 {
   "status": "success",
-  "message": "Recibimos tu remesa con éxito. Sigue el estado usando el mismo código de la cotización."
+  "message": "Recebemos sua remessa com sucesso! Acompanhe o status da mesma, usando o mesmo código da cotação!"
 }
 ```
 
-### Consultar estado
-- `GET /v1/shipping/{shipping}/status`
-- `shipping` acepta UUID de cotización, AWB o clave NF-e de 44 dígitos.
+### Consultar status del envío
+- Método y ruta: `GET /v1/shipping/{shipping}/status`
+- `shipping` acepta: UUID de la cotización, AWB o clave NF-e de 44 dígitos.
 
-### Consultar estado por canal
-- `GET /v1/shipping/status/{channel_identifier_number}/{channel_code?}`
+### Consultar status por canal
+- Método y ruta: `GET /v1/shipping/status/{channel_identifier_number}/{channel_code?}`
 
 ### Consultar documentos
-- `GET /v1/shipping/{shipping}/docs`
+- Método y ruta: `GET /v1/shipping/{shipping}/docs`
+- Retorna documentos, anexos y, si está permitido, docs incorporados.
 
 ### Consultar documentos por canal
-- `GET /v1/shipping/docs/{channel_identifier_number}/{channel_code?}`
+- Método y ruta: `GET /v1/shipping/docs/{channel_identifier_number}/{channel_code?}`
 
-### Actualizar remesa
-- `PUT /v1/shipping/{shipping}`
-- Usa `base64` y solo acepta `PDF`, `XML`, `JPEG` o `PNG`.
-- Tamaño máximo: `5 MB` por archivo.
+### Actualizar envío
+- Método y ruta: `PUT /v1/shipping/{shipping}`
+- Use para anexar documento y/o vincular NF-e en caso excepcional.
+- Los archivos anexados deben estar en `base64` y aceptar solo `PDF`, `XML`, `JPEG` o `PNG`.
+- El tamaño máximo es de `5 MB` por archivo.
 
-### Cancelar remesa
-- `DELETE /v1/shipping/{shipping}`
+#### Ejemplo de request
+```bash
+curl --request PUT \
+  --url https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944 \
+  --header 'Authorization: Bearer SEU_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "nfkey": "12345678901234567890123456789012345678901234",
+    "attachments": [
+      {
+        "description": "Nota Fiscal",
+        "base64": "JVBERi0xLjcK..."
+      }
+    ]
+  }'
+```
+
+#### Ejemplo de response
+```json
+{
+  "status": "success",
+  "message": "Remessa atualizada com sucesso!"
+}
+```
+
+### Cancelar envío
+- Método y ruta: `DELETE /v1/shipping/{shipping}`
 - `reason` es opcional en el body y acepta texto libre.
 
-### Ejemplo de cancelación
+#### Ejemplo de request
 ```bash
 curl --request DELETE \
   --url https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944 \
@@ -180,21 +212,78 @@ curl --request DELETE \
   --data '{"reason":"Customer requested cancellation"}'
 ```
 
-### Ejemplo de respuesta
+#### Ejemplo de response
 ```json
 {
   "status": "success",
-  "message": "Solicitud procesada, consulta el estado en breve para seguir el proceso de cancelación"
+  "message": "Requisição processada, dentro de instantes consulte o status para acompanhar o processo de cancelamento"
 }
 ```
 
+### Eliminar anexos
+- Método y ruta: `DELETE /v1/shipping/{shipping}/docs`
+- Envíe `attachments` con `id` o `name`.
+
+#### Ejemplo de request
+```bash
+curl --request DELETE \
+  --url https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944/docs \
+  --header 'Authorization: Bearer SEU_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "attachments": [
+      {"id": 123456},
+      {"name": "Nota Fiscal"}
+    ]
+  }'
+```
+
+#### Ejemplo de response
+```json
+{
+  "status": "success",
+  "message": "Documentos processados com sucesso!"
+}
+```
+
+## Consultas y documentos
+### Parámetros de documentos
+| Nombre | Local | Tipo | Obligatorio | Descripción | Ejemplo | Observaciones |
+|---|---|---:|---:|---|---|---|
+| `attachments` | query | boolean | no | Incluye anexos | `true` | Default `true` |
+| `embedded` | query | boolean | no | Incluye docs incorporados | `true` | Default `true` |
+| `base64` | query | boolean | no | Incluye base64 | `true` | Default `true` |
+| `documents` | query | string | no | Filtra tipos | `invoice_pdf,awb_pdf` | Lista separada por coma |
+
+### Tipos de documentos identificados
+- `awb_pdf`
+- `awb_zpl`
+- `awb_prc_pdf`
+- `awb_prc_zpl`
+- `awb_prc_fedex_pdf`
+- `awb_prc_fedex_zpl`
+- `declaration_pdf`
+- `invoice_pdf`
+- `non_dangerous_pdf`
+- `packing_list_pdf`
+
+### Ejemplo de consulta de documentos
+```bash
+curl --request GET \
+  --url 'https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944/docs?attachments=true&embedded=true&base64=true&documents=invoice_pdf,awb_pdf' \
+  --header 'Authorization: Bearer SEU_TOKEN' \
+  --header 'lang: pt'
+```
+
 ## Errores comunes
-| Estado | Significado | Cómo corregir |
+| Status | Significado | Cómo corregir |
 |---|---|---|
-| `400` | Remesa no encontrada o flujo inválido | Verificar el identificador y la cotización |
-| `422` | Validación | Corregir campos obligatorios |
-| `500` | Error inesperado | Contactar al equipo responsable |
+| `400` | Envío no encontrado o regla de negocio | Verificar `quotation`, `carrier_code` y elegibilidad |
+| `401` | Pago no autorizado | Ajustar la configuración de la cuenta |
+| `404` | Recurso no encontrado | Confirmar el identificador informado |
+| `422` | Validación | Corregir payload |
+| `500` | Error inesperado | Accionar al equipo responsable |
 
 ## Observaciones finales
-- El endpoint de estado es la fuente canónica para el ciclo de vida operacional.
-- Los endpoints de documentos son la forma más rápida de recuperar los archivos generados.
+- El envío v1 es el punto de integración más completo del ciclo operativo.
+- Consulte `api-documentos.md` y `api-rastreio.md` para ejemplos dedicados de consulta y seguimiento.

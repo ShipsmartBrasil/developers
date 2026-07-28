@@ -1,4 +1,4 @@
-# Guía Técnica de Integración
+# Guía de Integración Técnica
 
 ## Menú Principal
 - [Volver al README principal](../README.md)
@@ -6,13 +6,13 @@
 ## Índice
 - [Cotización](api-cotacao-v1.md)
 - [Cotización V2](api-cotacao-v2.md)
-- [Remesa](api-remessa-v1.md)
-- [Remesa V2](api-remessa-v2.md)
-- [Comparativo Cotización y Remesa: v1 vs v2](api-comparativo-cotacao-remessa.md)
-- [Documentos de remesa](api-documentos.md)
-- [Rastreo de remesa](api-rastreio.md)
-- [Programación de recogida](api-agendamento.md)
-- [Manifiesto](api-manifesto.md)
+- [Envío](api-remessa-v1.md)
+- [Envío V2](api-remessa-v2.md)
+- [Comparativo Cotización & Envío: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Documentos de Envío](api-documentos.md)
+- [Seguimiento de Envío](api-rastreio.md)
+- [Programación de Recolección](api-agendamento.md)
+- [Manifesto](api-manifesto.md)
 - [Borrador](api-rascunho.md)
 - [Caja](api-caixa-v1.md)
 - [Ítems](api-itens-v1.md)
