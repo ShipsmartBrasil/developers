@@ -1,58 +1,63 @@
-# Seguimiento de Envío
+# Seguimiento del Envío
 
 - [Volver al README del idioma](README.md)
+- Prerrequisito: [Primeros Pasos](api-primeiros-passos.md)
 
 ## Visión general
-- Consulta el status operativo y el historial de un envío.
-- Muestra recepción, pago, procesamiento, transporte y cancelación.
-- Asociado al flujo operativo principal.
+- Consulta el status operativo y el historial completo de un envío, desde la recepción en la plataforma hasta la
+  entrega (o la cancelación).
+- La misma respuesta trae **dos formatos**: una `timeline` cronológica y los eventos **agrupados por status**.
+- Funciona para envíos creados en la **v1 y en la v2**.
 
 ## Base URL
-- Produção: `https://api.shipsmart.global`
-- Documentação: `https://api.shipsmart.global/docs`
-- Homologação: `https://hmlapi.shipsmart.com.br`
+- Producción: `https://api.shipsmart.global`
+- Homologación: `https://hmlapi.shipsmart.com.br`
+- Documentación interactiva: `https://api.shipsmart.global/doc` y `https://hmlapi.shipsmart.com.br/doc`
 
 ## Autenticación
-- Bearer token en el header `Authorization`.
-- Header de idioma: `lang`.
+```
+Authorization: Bearer SU_TOKEN
+lang: pt
+```
 
-## Convenções
-- El campo `shipping` acepta UUID, AWB o NF-e, según el endpoint.
-- Los status usan códigos internos como `RCV0001`, `PPY0001`, `SPD0001`, `CCG0001` y `CCD0001`.
-
-## Formatos de respuesta
-- El mismo endpoint retorna dos formatos: `timeline` y `status`.
-- `timeline` trae los eventos en el orden en que llegan del transportador.
-- `status` trae los eventos agrupados por status, usando el mapeo interno de la plataforma para simplificar la lectura.
-
-## Flujo de uso
-1. Cree el envío.
-2. Consulte el status por `shipping` o por canal.
-3. Siga `received`, `processing_payment`, `processing_shipment`, `shipped` y, si corresponde, cancelación.
+> Las descripciones de status (`status_description`) se traducen según el header `lang`.
+> Los códigos (`status_code`) **no** cambian con el idioma — úsalos para la lógica de integración.
 
 ## Endpoints
+
 ### Status por envío
-- Método y ruta: `GET /v1/shipping/{shipping}/status`
+- **Método y ruta:** `GET /v1/shipping/{shipping}/status`
 
 ### Status por canal
-- Método y ruta: `GET /v1/shipping/status/{channel_identifier_number}/{channel_code?}`
+- **Método y ruta:** `GET /v1/shipping/status/{channel_identifier_number}/{channel_code}`
 
-### Parámetros
-| Nombre | Local | Tipo | Obligatorio | Descripción | Ejemplo | Observaciones |
-|---|---|---:|---:|---|---|---|
-| `shipping` | path | string | sí | Identificador del envío | `9c06fd75-d5f4-40eb-a1a8-f12086f49944` | Acepta UUID, AWB y NF-e |
-| `channel_identifier_number` | path | string | sí | Número del canal | `334455` | - |
-| `channel_code` | path | integer | no | Código del canal | `1` | Opcional |
+## Parámetros
 
-### Ejemplo de request
+| Nombre | Lugar | Tipo | Obligatorio | Descripción |
+|---|---|---|---|---|
+| `shipping` | path | string | **sí** | UUID de la cotización, número del AWB (últimos 90 días) o clave de la NF-e (44 dígitos) |
+| `channel_identifier_number` | path | string | **sí** (variante por canal) | Identificador comercial informado en la cotización |
+| `channel_code` | path | integer | no | Código del canal de venta |
+
+## Ejemplo de request
+
 ```bash
 curl --request GET \
   --url https://api.shipsmart.global/v1/shipping/9c06fd75-d5f4-40eb-a1a8-f12086f49944/status \
-  --header 'Authorization: Bearer SEU_TOKEN' \
+  --header 'Authorization: Bearer SU_TOKEN' \
   --header 'lang: pt'
 ```
 
-### Ejemplo de response
+Por canal:
+```bash
+curl --request GET \
+  --url https://api.shipsmart.global/v1/shipping/status/PED-2026-0001/1 \
+  --header 'Authorization: Bearer SU_TOKEN' \
+  --header 'lang: pt'
+```
+
+## Ejemplo de response
+
 ```json
 {
   "status": "success",
@@ -63,34 +68,215 @@ curl --request GET \
       "tracking_number": "271249639538",
       "timeline": [
         {
-          "update_date": "2024-02-21",
+          "update_date": "2026-02-21",
           "update_time": "15:42:38",
           "status_code": "RCV0001",
           "status_description": "Remessa foi recebida em nosso sistema"
+        },
+        {
+          "update_date": "2026-02-21",
+          "update_time": "15:42:40",
+          "status_code": "POT0001",
+          "status_description": "Pagamento aprovado junto ao gateway: approved"
+        },
+        {
+          "update_date": "2026-02-21",
+          "update_time": "15:44:38",
+          "status_code": "SPD0001",
+          "status_description": "Remessa foi processada no transportador especificado. Documentos gerados e já disponíveis para download via portal ou API!"
+        },
+        {
+          "update_date": "2026-02-22",
+          "update_time": "09:10:02",
+          "status_code": "CLD0001",
+          "status_description": "Remessa coletada pelo transportador"
+        },
+        {
+          "update_date": "2026-02-23",
+          "update_time": "04:35:11",
+          "status_code": "ITR0001",
+          "status_description": "Remessa em trânsito internacional"
         }
       ]
     },
-    "received": [],
-    "processing_payment": [],
-    "shipped": []
+    "cost_center": {
+      "code": 1,
+      "name": "E-commerce"
+    },
+    "received": [
+      {
+        "update_date": "2026-02-21",
+        "update_time": "15:42:38",
+        "status_code": "RCV0001",
+        "status_description": "Remessa foi recebida em nosso sistema"
+      }
+    ],
+    "paid_out": [
+      {
+        "update_date": "2026-02-21",
+        "update_time": "15:42:40",
+        "status_code": "POT0001",
+        "status_description": "Pagamento aprovado junto ao gateway: approved"
+      }
+    ],
+    "shipped": [
+      {
+        "update_date": "2026-02-21",
+        "update_time": "15:44:38",
+        "status_code": "SPD0001",
+        "status_description": "Remessa foi processada no transportador especificado. Documentos gerados e já disponíveis para download via portal ou API!"
+      }
+    ],
+    "collected": [
+      {
+        "update_date": "2026-02-22",
+        "update_time": "09:10:02",
+        "status_code": "CLD0001",
+        "status_description": "Remessa coletada pelo transportador"
+      }
+    ],
+    "in_transit": [
+      {
+        "update_date": "2026-02-23",
+        "update_time": "04:35:11",
+        "status_code": "ITR0001",
+        "status_description": "Remessa em trânsito internacional"
+      }
+    ],
+    "last_update": {
+      "in_transit": {
+        "update_date": "2026-02-23",
+        "update_time": "04:35:11",
+        "status_code": "ITR0001",
+        "status_description": "Remessa em trânsito internacional"
+      }
+    }
   }
 }
 ```
 
+## Estructura de la respuesta
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `data.carrier.name` | string | Nombre del contrato/transportista que procesó el envío |
+| `data.carrier.tracking_number` | string | Número de seguimiento (AWB) en el transportista |
+| `data.carrier.timeline` | array | **Todos los eventos en orden cronológico.** Usa este campo para montar una línea de tiempo en tu interfaz |
+| `data.cost_center` | object | **Opcional.** Solo aparece cuando el envío tiene centro de costo |
+| `data.cost_center.code` | integer | Código del centro de costo |
+| `data.cost_center.name` | string | Nombre del centro de costo |
+| `data.<grupo_de_status>` | array | Eventos agrupados por status. Las claves existentes varían según el avance |
+| `data.last_update` | object | **Último evento**, en el formato `{ "<grupo>": { ...evento } }`. Úsalo para saber el estado actual con una única lectura |
+
+Cada evento (en `timeline`, en los grupos y en `last_update`) tiene la misma forma:
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `update_date` | string | Fecha del evento (`Y-m-d`) |
+| `update_time` | string | Hora del evento (`H:i:s`) |
+| `status_code` | string | Código interno del status (ver tabla) o el código bruto del gateway/transportista |
+| `status_description` | string | Descripción legible, traducida por el header `lang` |
+
+### Los dos formatos, y cuándo usar cada uno
+
+| Formato | Dónde está | Úsalo para |
+|---|---|---|
+| Cronológico | `data.carrier.timeline` | Mostrar el historial completo al usuario final |
+| Agrupado por status | `data.received`, `data.shipped`, `data.in_transit`... | Verificar si el envío **ya pasó** por determinada etapa (`if (isset(data.shipped))`) |
+| Último estado | `data.last_update` | Dashboards y sincronizaciones: una lectura resuelve "dónde está el envío" |
+
+## Grupos de status y códigos
+
+| Grupo (clave en `data`) | `status_code` | Significado |
+|---|---|---|
+| `received` | `RCV0001` | El envío fue recibido en la plataforma |
+| `processing_payment` | `PPY0001` | Esperando la confirmación del pago en el gateway |
+| `paid_out` | `POT0001` | Pago aprobado |
+| `pending_consolidation` | `PCD0001` | Esperando consolidación (contratos con consolidación) |
+| `consolidating` | `CDT0001` | En consolidación |
+| `processing_shipment` | `PSH0001` | Pago resuelto, esperando el procesamiento en el transportista |
+| `shipped` | `SPD0001` | **Procesado en el transportista. Documentos disponibles** |
+| `collecting` | `CLG0001` | Recogida en curso |
+| `collected` | `CLD0001` | Recogido por el transportista |
+| `in_transit` | `ITR0001` | En tránsito |
+| `delivering` | `DLG0001` | En ruta de entrega |
+| `delivered` | `DLD0001` | Entregado |
+| `error` | `ERR0001` | Error en el procesamiento |
+| `cancelling` | `CCG0001` | Cancelación solicitada, en procesamiento |
+| `cancelled` | `CCD0001` | Cancelado |
+| `foc` | `FOC0001` | Finalizado por el transportista |
+| `eol` | `EOL0001` | Fin del ciclo de vida del seguimiento |
+
+> **`status_code` puede traer el código bruto del gateway o del transportista** cuando existe
+> (ej.: `approved`, `charge.succeeded`, códigos propios de la transportista). Los códigos `XXX0001` son el
+> de/para interno de la plataforma, usados cuando no hay código externo. Para la lógica de negocio, prefiere la
+> **clave del grupo** (`shipped`, `delivered`, `cancelled`...) en lugar del `status_code`.
+
+## Flujo típico de estados
+
+```
+received
+   │
+   ├── processing_payment ──► paid_out        (pago vía gateway)
+   │
+   └── (pago billed: sigue directo)
+                │
+                ├── pending_consolidation ──► consolidating   (cuando hay consolidación)
+                │
+                ▼
+         processing_shipment
+                │
+                ▼
+             shipped          ◄── documentos disponibles a partir de aquí
+                │
+                ▼
+    collecting ──► collected ──► in_transit ──► delivering ──► delivered
+                │
+                └── error | cancelling ──► cancelled | foc | eol
+```
+
 ## Reglas de negocio
-- El pago debe existir para que el envío retorne status completo.
-- Si el pago aún no fue aprobado, el status puede quedar en `processing_payment`.
-- Cuando el envío es facturado y aún no procesado en el transportador, puede aparecer `processing_shipment`.
-- Cuando hay cancelación, la respuesta puede incluir `cancelling` o `cancelled`.
+
+- **Todo envío necesita tener un registro de pago** para que el status sea montado. Si no lo hay,
+  la respuesta es `404` con `Nenhuma entrada de pagamento foi registrada para esta remessa!`.
+- Con `payment.type: billed`, el envío no pasa por `processing_payment`: sigue directo a
+  `processing_shipment`/`shipped`.
+- Con `payment.type: gateway`, el envío queda en `processing_payment` hasta que el gateway apruebe; solo entonces
+  avanza a `processing_shipment`.
+- El grupo cambia de `processing_shipment` a `shipped` en el momento en que los **documentos son generados**.
+  Esa es la señal para llamar a [Documentos del Envío](api-documentos.md).
+- Cuando el envío está en `cancelling`, `cancelled` o `error`, el `last_update` usa la descripción propia
+  de la plataforma en lugar del texto bruto del transportista.
+- Los envíos que permanecen **29 días o más** sin evento de seguimiento en un status elegible pueden ser cancelados
+  automáticamente por la plataforma.
+- La búsqueda por AWB funciona para envíos creados en los **últimos 90 días**.
+
+## Buenas prácticas de polling
+
+| Situación | Intervalo recomendado |
+|---|---|
+| Justo después de crear el envío (esperando `shipped`) | 10 a 30 segundos, con backoff |
+| Envío ya en `shipped`/`in_transit` | 1 a 4 horas |
+| Envío en `delivered`, `cancelled`, `foc` o `eol` | Detén el polling: son estados finales |
+
+1. Lee `data.last_update` para decidir si hubo cambio — es la lectura más barata.
+2. Detén el polling en los estados finales.
+3. Usa backoff exponencial en `500`.
+4. Trata `400`/`404` como condición de negocio: no repitas la misma solicitud en bucle.
 
 ## Errores comunes
-| Status | Significado | Cómo corregir |
+
+| Status | Significado | Cómo corregirlo |
 |---|---|---|
-| `400` | Envío no encontrado | Verificar identificador |
-| `404` | Sin pago vinculado | Confirmar procesamiento del envío |
-| `500` | Error inesperado | Accionar al equipo responsable |
+| `400` | `Nenhuma remessa encontrada com o código especificado!` | Verificar `{shipping}` o el identificador del canal |
+| `403` | Sin permiso para consultar el status | Solicitar el permiso al soporte |
+| `404` | `Nenhuma entrada de pagamento foi registrada para esta remessa!` | Esperar el registro del pago; si persiste, contactar al soporte |
+| `422` | `channel_code` no numérico | Enviar un entero en `channel_code` |
+| `500` | Error inesperado | Repetir con backoff; si persiste, contactar al soporte |
 
 ## Observaciones finales
-- El seguimiento es la forma más completa de monitorear la vida útil del envío.
-- La timeline se deriva de los eventos internos y del retorno del pago/transportador.
-- La agrupación de status es un resumen operativo para facilitar la comprensión del seguimiento del envío.
+- `data.carrier.timeline` es la visión más completa; los grupos son un resumen operativo para facilitar la
+  lectura programática.
+- Guarda el `tracking_number` para ofrecer al cliente final el seguimiento en el sitio del transportista.
+- Para descargar la etiqueta y la invoice en cuanto el envío alcance `shipped`, consulta
+  [Documentos del Envío](api-documentos.md).

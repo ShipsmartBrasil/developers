@@ -1,40 +1,131 @@
 # Guía de Integración Técnica
 
-## Menú Principal
+> Guía de integración con la **API Pública de Shipsmart Global**: cotización internacional, creación de
+> envíos, documentos, seguimiento y programación de recogida.
+
 - [Volver al README principal](../README.md)
 
-## Cómo usar
-El uso de la API debe comenzar por el flujo principal de cotización y envío:
+## Empieza por aquí
 
-- [Cotización](api-cotacao-v1.md) o [Cotización V2](api-cotacao-v2.md)
-- [Envío](api-remessa-v1.md) o [Envío V2](api-remessa-v2.md)
-- [Cotización & Envío: v1 vs v2](api-comparativo-cotacao-remessa.md)
-- [Buscar los documentos del envío](api-documentos.md)
-- [Programar la recolección con el transportista](api-agendamento.md)
-- [Acompañar el envío](api-rastreio.md)
+| Paso | Página | Lo que aprendes |
+|---|---|---|
+| 1 | [Primeros Pasos](api-primeiros-passos.md) | Entornos, autenticación, idioma, formato de respuesta, errores y preajustes |
+| 2 | [Cotización y Envío: v1 vs v2](api-comparativo-cotacao-remessa.md) | Qué versión usar en tu integración |
+| 3 | [Cotización](api-cotacao-v1.md) | Calcular flete, seguro e impuestos |
+| 4 | [Envío](api-remessa-v1.md) | Transformar la cotización en un envío real |
+| 5 | [Seguimiento del Envío](api-rastreio.md) | Acompañar el envío hasta la entrega |
+| 6 | [Documentos del Envío](api-documentos.md) | Descargar AWB, invoice y demás documentos |
+| 7 | [Programación de Recogida](api-agendamento.md) | Solicitar la retirada del bulto en tu dirección |
 
-Otras formas de crear envíos:
+## El flujo principal
 
-- [Manifesto](api-manifesto.md): cotización & envío síncrono directamente con el transportista
-- [Borrador](api-rascunho.md): cotización & envío asíncrono
+```
+Cotización  ──►  Envío  ──►  Seguimiento  ──►  Documentos  ──►  Recogida
+```
 
-APIs de apoyo:
+1. **Cotizar:** [Cotización](api-cotacao-v1.md) o [Cotización V2](api-cotacao-v2.md)
+2. **Enviar:** [Envío](api-remessa-v1.md) o [Envío V2](api-remessa-v2.md)
+3. **Acompañar:** [Seguimiento del Envío](api-rastreio.md)
+4. **Documentar:** [Documentos del Envío](api-documentos.md)
+5. **Recoger:** [Programación de Recogida](api-agendamento.md)
 
-- [Caja](api-caixa-v1.md)
-- [Ítem](api-itens-v1.md)
-- [Contrato](api-contrato-v1.md)
+## Formas de hacer un envío
 
-## Índice
+| Flujo | Ruta principal | Característica |
+|---|---|---|
+| [Cotización](api-cotacao-v1.md) + [Envío](api-remessa-v1.md) | `POST /v1/quotation` → `POST /v1/shipping` | Flujo estándar. Eliges el transportista entre las opciones cotizadas |
+| [Cotización V2](api-cotacao-v2.md) + [Envío V2](api-remessa-v2.md) | `POST /v2/quotation` → `POST /v2/shipping` | Para cuando solo se conoce el país en el momento de cotizar |
+| [Manifiesto](api-manifesto.md) | `POST /v1/manifest` | **Sincrónico:** cotiza, despacha y devuelve los documentos en una sola llamada |
+| [Borrador](api-rascunho.md) | `POST /v1/draft` | **Asíncrono:** acepta payload parcial y evoluciona a cotización + envío |
+
+## APIs de apoyo
+
+| Página | Para qué sirve |
+|---|---|
+| [Caja](api-caixa-v1.md) | Registrar embalajes y referenciarlos en la cotización |
+| [Artículos](api-itens-v1.md) | Registrar productos (peso, dimensiones, HS Code) y usarlos por SKU |
+| [Contrato](api-contrato-v1.md) | Listar los contratos de transporte habilitados en tu cuenta |
+| [Plataforma](api-plataforma.md) | Probar token y conectividad; health check |
+
+## Índice completo
+
+### Introducción
+- [Primeros Pasos](api-primeiros-passos.md)
+- [Cotización y Envío: v1 vs v2](api-comparativo-cotacao-remessa.md)
+
+### Cotización
 - [Cotización](api-cotacao-v1.md)
 - [Cotización V2](api-cotacao-v2.md)
+
+### Envío
 - [Envío](api-remessa-v1.md)
 - [Envío V2](api-remessa-v2.md)
-- [Comparativo Cotización & Envío: v1 vs v2](api-comparativo-cotacao-remessa.md)
-- [Documentos de Envío](api-documentos.md)
-- [Seguimiento de Envío](api-rastreio.md)
-- [Programación de Recolección](api-agendamento.md)
-- [Manifesto](api-manifesto.md)
+- [Manifiesto](api-manifesto.md)
 - [Borrador](api-rascunho.md)
+
+### Post-envío
+- [Seguimiento del Envío](api-rastreio.md)
+- [Documentos del Envío](api-documentos.md)
+- [Programación de Recogida](api-agendamento.md)
+
+### Apoyo
 - [Caja](api-caixa-v1.md)
-- [Ítems](api-itens-v1.md)
+- [Artículos](api-itens-v1.md)
 - [Contrato](api-contrato-v1.md)
+- [Plataforma](api-plataforma.md)
+
+## Referencia rápida de endpoints
+
+### Cotización
+| Método | Ruta | Página |
+|---|---|---|
+| `POST` | `/v1/quotation` | [Cotización](api-cotacao-v1.md) |
+| `GET` | `/v1/quotation/{quotation}/{level}` | [Cotización](api-cotacao-v1.md) |
+| `POST` | `/v2/quotation` | [Cotización V2](api-cotacao-v2.md) |
+
+### Envío
+| Método | Ruta | Página |
+|---|---|---|
+| `POST` | `/v1/shipping` | [Envío](api-remessa-v1.md) |
+| `POST` | `/v2/shipping` | [Envío V2](api-remessa-v2.md) |
+| `PUT` | `/v1/shipping/{shipping}` | [Envío](api-remessa-v1.md) |
+| `DELETE` | `/v1/shipping/{shipping}` | [Envío](api-remessa-v1.md) |
+| `DELETE` | `/v1/shipping/{channel_identifier_number}/{channel_code}` | [Envío](api-remessa-v1.md) |
+| `DELETE` | `/v1/shipping/{shipping}/docs` | [Envío](api-remessa-v1.md) |
+| `POST` | `/v1/manifest` | [Manifiesto](api-manifesto.md) |
+| `POST` | `/v1/draft` | [Borrador](api-rascunho.md) |
+| `PUT` | `/v1/draft/{code}` | [Borrador](api-rascunho.md) |
+| `GET` | `/v1/draft` | [Borrador](api-rascunho.md) |
+| `DELETE` | `/v1/draft` | [Borrador](api-rascunho.md) |
+
+### Seguimiento y documentos
+| Método | Ruta | Página |
+|---|---|---|
+| `GET` | `/v1/shipping/{shipping}/status` | [Seguimiento](api-rastreio.md) |
+| `GET` | `/v1/shipping/status/{channel_identifier_number}/{channel_code}` | [Seguimiento](api-rastreio.md) |
+| `GET` | `/v1/shipping/{shipping}/docs` | [Documentos](api-documentos.md) |
+| `GET` | `/v1/shipping/docs/{channel_identifier_number}/{channel_code}` | [Documentos](api-documentos.md) |
+
+### Recogida
+| Método | Ruta | Página |
+|---|---|---|
+| `POST` | `/v1/schedule` | [Programación](api-agendamento.md) |
+| `GET` | `/v1/schedule/{shipping}` | [Programación](api-agendamento.md) |
+| `DELETE` | `/v1/schedule/{shipping}/{reason}` | [Programación](api-agendamento.md) |
+
+### Apoyo
+| Método | Ruta | Página |
+|---|---|---|
+| `GET` `POST` `DELETE` | `/v1/box` | [Caja](api-caixa-v1.md) |
+| `GET` `POST` `PUT` `DELETE` | `/v1/item` | [Artículos](api-itens-v1.md) |
+| `GET` | `/v1/contract` | [Contrato](api-contrato-v1.md) |
+| `GET` | `/v1/platform/version` | [Plataforma](api-plataforma.md) |
+
+## Entornos
+
+| Entorno | Base URL | Documentación interactiva |
+|---|---|---|
+| Producción | `https://api.shipsmart.global` | `https://api.shipsmart.global/doc` |
+| Homologación | `https://hmlapi.shipsmart.com.br` | `https://hmlapi.shipsmart.com.br/doc` |
+
+> Desarrolla siempre en **homologación**. Las nuevas features aparecen allí primero.
