@@ -5,6 +5,9 @@
 
 - [Voltar ao README principal](../README.md)
 
+> ⚠️ Todos os exemplos deste guia (payloads, respostas, códigos, documentos e tokens) são **meramente ilustrativos**
+> e **não são dados válidos**.
+
 ## Comece por aqui
 
 | Passo | Página | O que você aprende |
@@ -16,6 +19,7 @@
 | 5 | [Rastreio de Remessa](api-rastreio.md) | Acompanhar o envio até a entrega |
 | 6 | [Documentos de Remessa](api-documentos.md) | Baixar AWB, invoice e demais documentos |
 | 7 | [Agendamento de Coleta](api-agendamento.md) | Pedir a retirada do volume no seu endereço |
+| 8 | [Códigos de Erro](api-codigos-de-erro.md) | Tratar cada mensagem de erro da API |
 
 ## O fluxo principal
 
@@ -52,14 +56,30 @@ Cotação  ──►  Remessa  ──►  Rastreio  ──►  Documentos  ─�
 ### Introdução
 - [Primeiros Passos](api-primeiros-passos.md)
 - [Cotação & Remessa: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Códigos de Erro](api-codigos-de-erro.md)
 
 ### Cotação
-- [Cotação](api-cotacao-v1.md)
-- [Cotação V2](api-cotacao-v2.md)
+- [Cotação (v1)](api-cotacao-v1.md)
+  - [Cotação de Documento](api-cotacao-v1.md#cotação-de-documento)
+  - [Cotação de Pacote (Caixa) — simples](api-cotacao-v1.md#cotação-de-pacote-caixa--simples)
+  - [Cotação de Pacote (Caixa) — avançado](api-cotacao-v1.md#cotação-de-pacote-caixa--avançado)
+  - [Cotação de Pallet — por CLA](api-cotacao-v1.md#cotação-de-pallet--por-cla)
+  - [Cotação de Pallet — por m³](api-cotacao-v1.md#cotação-de-pallet--por-m³)
+  - [Cotação com Kit](api-cotacao-v1.md#cotação-com-kit)
+  - [Cotações inelegíveis para remessa](api-cotacao-v1.md#cotações-inelegíveis-para-remessa)
+- [Cotação (v2)](api-cotacao-v2.md)
+  - [Cenários de cotação v2](api-cotacao-v2.md#cenários-de-cotação)
+  - [Cotação de Itens (exclusiva da v2)](api-cotacao-v2.md#cotação-de-itens)
+  - [Cotações inelegíveis para remessa](api-cotacao-v2.md#cotações-inelegíveis-para-remessa)
+- [Diferença entre Cotação v1 e v2](api-comparativo-cotacao-remessa.md#comparativo-da-cotação)
 
 ### Remessa
-- [Remessa](api-remessa-v1.md)
-- [Remessa V2](api-remessa-v2.md)
+- [Remessa (cotação v1)](api-remessa-v1.md)
+  - [Cotações inelegíveis para remessa](api-remessa-v1.md#cotações-inelegíveis-para-remessa)
+  - [Atualizar remessa](api-remessa-v1.md#endpoint-atualizar-remessa)
+  - [Cancelar remessa](api-remessa-v1.md#endpoint-cancelar-remessa)
+- [Remessa (cotação v2)](api-remessa-v2.md)
+- [Diferença entre Remessa v1 e v2](api-comparativo-cotacao-remessa.md#comparativo-da-remessa)
 - [Manifesto](api-manifesto.md)
 - [Rascunho](api-rascunho.md)
 

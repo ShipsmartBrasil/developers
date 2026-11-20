@@ -5,6 +5,9 @@
 
 - [Torna al README principale](../README.md)
 
+> ⚠️ Tutti gli esempi di questa guida (payload, risposte, codici, documenti e token) sono **puramente illustrativi**
+> e **non sono dati validi**.
+
 ## Inizia da qui
 
 | Passo | Pagina | Cosa impari |
@@ -16,6 +19,7 @@
 | 5 | [Tracciamento della Spedizione](api-rastreio.md) | Seguire la spedizione fino alla consegna |
 | 6 | [Documenti della Spedizione](api-documentos.md) | Scaricare AWB, invoice e gli altri documenti |
 | 7 | [Pianificazione del Ritiro](api-agendamento.md) | Richiedere il prelievo del collo presso il tuo indirizzo |
+| 8 | [Codici di Errore](api-codigos-de-erro.md) | Gestire ogni messaggio di errore dell'API |
 
 ## Il flusso principale
 
@@ -52,14 +56,30 @@ Quotazione  ──►  Spedizione  ──►  Tracciamento  ──►  Documenti
 ### Introduzione
 - [Primi Passi](api-primeiros-passos.md)
 - [Quotazione & Spedizione: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Codici di Errore](api-codigos-de-erro.md)
 
 ### Quotazione
-- [Quotazione](api-cotacao-v1.md)
-- [Quotazione V2](api-cotacao-v2.md)
+- [Quotazione (v1)](api-cotacao-v1.md)
+  - [Quotazione di Documento](api-cotacao-v1.md#quotazione-di-documento)
+  - [Quotazione di Pacco (Scatola) — semplice](api-cotacao-v1.md#quotazione-di-pacco-scatola--semplice)
+  - [Quotazione di Pacco (Scatola) — avanzata](api-cotacao-v1.md#quotazione-di-pacco-scatola--avanzata)
+  - [Quotazione di Pallet — per LLA](api-cotacao-v1.md#quotazione-di-pallet--per-lla)
+  - [Quotazione di Pallet — per m³](api-cotacao-v1.md#quotazione-di-pallet--per-m³)
+  - [Quotazione con Kit](api-cotacao-v1.md#quotazione-con-kit)
+  - [Quotazioni non idonee alla spedizione](api-cotacao-v1.md#quotazioni-non-idonee-alla-spedizione)
+- [Quotazione (v2)](api-cotacao-v2.md)
+  - [Scenari di quotazione v2](api-cotacao-v2.md#scenari-di-quotazione)
+  - [Quotazione di Articoli (esclusiva della v2)](api-cotacao-v2.md#quotazione-di-articoli)
+  - [Quotazioni non idonee alla spedizione](api-cotacao-v2.md#quotazioni-non-idonee-alla-spedizione)
+- [Differenza tra Quotazione v1 e v2](api-comparativo-cotacao-remessa.md#confronto-della-quotazione)
 
 ### Spedizione
-- [Spedizione](api-remessa-v1.md)
-- [Spedizione V2](api-remessa-v2.md)
+- [Spedizione (quotazione v1)](api-remessa-v1.md)
+  - [Quotazioni non idonee alla spedizione](api-remessa-v1.md#quotazioni-non-idonee-alla-spedizione)
+  - [Aggiornare la spedizione](api-remessa-v1.md#endpoint-aggiornare-la-spedizione)
+  - [Annullare la spedizione](api-remessa-v1.md#endpoint-cancellare-la-spedizione)
+- [Spedizione (quotazione v2)](api-remessa-v2.md)
+- [Differenza tra Spedizione v1 e v2](api-comparativo-cotacao-remessa.md#confronto-della-spedizione)
 - [Manifesto](api-manifesto.md)
 - [Bozza](api-rascunho.md)
 
@@ -123,7 +143,7 @@ Quotazione  ──►  Spedizione  ──►  Tracciamento  ──►  Documenti
 
 ## Ambienti
 
-| Ambiente | Base URL | Documentazione interattiva |
+| Ambiente | URL di base | Documentazione interattiva |
 |---|---|---|
 | Produzione | `https://api.shipsmart.global` | `https://api.shipsmart.global/doc` |
 | Staging | `https://hmlapi.shipsmart.com.br` | `https://hmlapi.shipsmart.com.br/doc` |

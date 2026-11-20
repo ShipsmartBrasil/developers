@@ -3,28 +3,35 @@
 - [Voltar ao README do idioma](README.md)
 - Pré-requisito: [Primeiros Passos](api-primeiros-passos.md)
 
+> ⚠️ **Exemplos meramente ilustrativos:** todos os payloads, respostas, identificadores, códigos, documentos e tokens
+> desta página são fictícios e **não são dados válidos**. Substitua-os pelos dados reais da sua conta e da sua operação.
+
 ## Visão geral
-Existem duas versões publicadas para o par **cotação + remessa**. Elas usam a **mesma engine de cálculo**
-e os **mesmos transportadores**. A diferença está em **quando** você informa o endereço completo.
+Existem duas versões publicadas para o par **cotação + remessa**. Elas usam o **mesmo cálculo**
+e os **mesmos transportadores**. As diferenças estão em **quando** você informa o endereço completo e em
+**como** descreve a carga: só a v2 aceita a cotação por itens, sem informar as caixas.
 
 | | v1 | v2 |
 |---|---|---|
 | Endereço completo | Informado **na cotação** | Informado **na remessa** |
 | Payload da cotação | País + cidade + CEP/estado | Apenas o país (+ estado opcional) |
+| Cotação por itens (`type: items`) | Não disponível: caixas sempre informadas | **Disponível**: só o `sku` dos itens cadastrados |
 | Payload da remessa | Logradouro, nome, contato | Logradouro, nome, contato **+ cidade, estado, CEP** |
+| Validação do endereço | Na cotação | Na remessa |
 | Ciclo operacional completo | Sim, em `/v1` | Criação em `/v2`, restante em `/v1` |
 
 ## Em uma frase
 
 > **Use a v1** se, no momento de cotar, você já sabe para qual cidade/CEP vai enviar.
-> **Use a v2** se, no momento de cotar, você só sabe o país de destino.
+> **Use a v2** se, no momento de cotar, você só sabe o país de destino **ou** quer cotar apenas pelos SKUs
+> cadastrados, sem informar as caixas.
 
 ## Regra de ouro: não misture versões
 
 Uma cotação criada na v1 **só** gera remessa em `POST /v1/shipping`.
 Uma cotação criada na v2 **só** gera remessa em `POST /v2/shipping`.
 
-Misturar retorna `422`:
+Misturar retorna `422`, com a mensagem abaixo em `data.quotation`:
 ```
 Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cotação pode ter sido gerada em uma versão diferente da API.
 ```
@@ -34,24 +41,28 @@ Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cota
 | Tema | v1 (`POST /v1/quotation`) | v2 (`POST /v2/quotation`) |
 |---|---|---|
 | `address_*.country_code` | Obrigatório | Obrigatório |
-| `address_*.city` | **Obrigatório** | Não aceito |
-| `address_*.postal_code` | Obrigatório (ou `state`) | Não aceito |
-| `address_*.state` | Obrigatório (ou `state_code`/`postal_code`) | Não aceito |
+| `address_*.city` | **Obrigatório** | Ignorado |
+| `address_*.postal_code` | Obrigatório (ou `state`); **sempre obrigatório no Brasil** | Ignorado |
+| `address_*.state` | Obrigatório (ou `state_code`/`postal_code`) | Ignorado |
 | `address_*.state_code` | Obrigatório (ou `state`/`postal_code`) | **Opcional** (melhora a precisão) |
 | `object` | `doc`, `package`, `pallet`, `not_doc` | Idêntico |
-| `type` | `simple`, `advanced`, `items` | Idêntico |
-| `boxes[]` (incl. `kit`, `volume`) | Suportado | Idêntico |
-| `items[]` | Suportado | Idêntico, **sem** `selling_unit_value` |
+| `type` | `simple`, `advanced` | `simple`, `advanced` **e `items`** (exclusivo da v2) |
+| `boxes[]` (incl. `kit`, `volume`) | **Sempre obrigatório** | Obrigatório, exceto em `type: items` (conforme o agrupamento da conta) |
+| `items[]` (incl. `ean`, `nsmp`) | Suportado | Idêntico, **sem** `selling_unit_value` |
 | `ior` (Importer of Record) | Suportado | **Não faz parte do contrato** |
 | `declared_freight` | Suportado | Idêntico |
 | `manufacturer` | Suportado | Idêntico |
 | `level` (`simple`/`detailed`) | Suportado | Idêntico |
+| Validação do endereço (CEP, cidade, estado) | Na cotação | Não há (feita na remessa) |
 | Consultar resultado depois | `GET /v1/quotation/{quotation}/{level}` | **Não existe** |
 | Warnings aduaneiros | Suportado | Idêntico |
+| Predefinições da conta (imposto, seguro automático etc.) | Aplicadas | Idêntico |
+| Cenários (documento, pacote, pallet, itens, kit) | [Cenários da v1](api-cotacao-v1.md#cenários-de-cotação) | [Cenários da v2](api-cotacao-v2.md#cenários-de-cotação) |
 
 ### Impacto prático na cotação
 - **Precisão:** na v1, cidade e CEP permitem aplicar taxas e restrições regionais **já no cálculo**.
-  Na v2, o valor pode ser refinado quando o endereço completo entra na remessa.
+  Na v2, o cálculo considera país e estado; o endereço completo entra só na remessa.
+- **Erros de endereço:** na v1 aparecem na cotação; na v2 aparecem na remessa.
 - **Reconsulta:** a v2 não tem endpoint de reconsulta. **Guarde a resposta do `POST`** se precisar
   reexibir a cotação ao usuário.
 
@@ -62,14 +73,17 @@ Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cota
 | `quotation` | Cotação v1 | Cotação v2 |
 | `carrier_code` / `slug` | Um dos dois | Idêntico |
 | `address_*.street`, `name`, `email`, `phone`, `type` | Obrigatórios | Idênticos |
-| `address_*.city` | Não aceito | **Obrigatório** (mín. 3, máx. 100) |
-| `address_*.postal_code` | Não aceito | **Obrigatório** (ou `state`) |
-| `address_*.state` / `state_code` | Não aceitos | **Obrigatórios** (um deles, ou `postal_code`) |
+| `address_*.city` | Ignorado (vem da cotação) | **Obrigatório** (mín. 3, máx. 100) |
+| `address_*.postal_code` | Ignorado | **Obrigatório** se `state` não for enviado |
+| `address_*.state` | Ignorado | **Obrigatório** se `postal_code` não for enviado |
+| `address_*.state_code` | Ignorado | Opcional; o da cotação prevalece |
+| `address_*.address_code` | Precisa bater com o endereço da cotação | Só funciona se a cotação v2 usou o mesmo `address_code` |
 | `payment.type` | `billed`, `gateway`, `afterward` | Idêntico |
 | `nfkey`, `invoice_number`, `shipment_reference` | Suportados | Idênticos |
 | `cost_center_code`, `payment_notify_shipping_billing` | Suportados | Idênticos |
 | `attachments` | Suportado | Idêntico |
 | `biller` | Suportado | Idêntico, com localidade validada |
+| Elegibilidade da cotação | [Inelegíveis v1](api-remessa-v1.md#cotações-inelegíveis-para-remessa) | [Inelegíveis v2](api-remessa-v2.md#cotações-inelegíveis-para-remessa) |
 
 ## Operações pós-criação
 
@@ -162,7 +176,7 @@ versão em que a remessa foi criada.
     "street": "Main Avenue",
     "name": "John Doe",
     "email": "johndoe@example.com",
-    "phone": "11992494597",
+    "phone": "13055550100",
     "type": "pf"
   },
   "payment": { "type": "billed" }
@@ -189,11 +203,10 @@ versão em que a remessa foi criada.
   "address_receiver": {
     "postal_code": "33101",
     "city": "Miami",
-    "state_code": "FL",
     "street": "Main Avenue",
     "name": "John Doe",
     "email": "johndoe@example.com",
-    "phone": "11992494597",
+    "phone": "13055550100",
     "type": "pf"
   },
   "payment": { "type": "billed" }
@@ -216,6 +229,9 @@ Responda às perguntas em ordem:
 4. **Você quer o maior nível de precisão de impostos já na cotação?**
    - Sim → **v1**
    - Não → qualquer uma
+5. **Você quer cotar só com os SKUs cadastrados, sem informar as caixas?**
+   - Sim → **v2** ([Cotação de Itens](api-cotacao-v2.md#cotação-de-itens))
+   - Não → qualquer uma
 
 ### Cenários típicos
 
@@ -226,6 +242,7 @@ Responda às perguntas em ordem:
 | Marketplace que recebe o pedido completo via webhook | **v1** | Todos os dados já existem |
 | Integração B2B com despacho em lote | **v1** | Fluxo operacional completo na mesma versão |
 | Simulação em landing page internacional | **v2** | Payload mínimo, menos atrito |
+| ERP com catálogo de produtos já cadastrado | **v2** | Cotação por itens: só SKU e quantidade, a plataforma monta as caixas |
 | Cotação + remessa + documentos em uma chamada | **[Manifesto](api-manifesto.md)** | Fluxo síncrono, independente de v1/v2 |
 
 ## Outras formas de fazer remessa
@@ -242,3 +259,4 @@ Além do par cotação + remessa, existem dois fluxos alternativos:
   gere a remessa na sua própria versão**.
 - Os endpoints de apoio ([Caixa](api-caixa-v1.md), [Itens](api-itens-v1.md),
   [Contrato](api-contrato-v1.md)) são compartilhados e existem apenas em `/v1`.
+- Lista consolidada de mensagens de erro: [Códigos de Erro](api-codigos-de-erro.md).

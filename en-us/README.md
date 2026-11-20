@@ -5,6 +5,9 @@
 
 - [Back to the main README](../README.md)
 
+> ⚠️ All examples in this guide (payloads, responses, codes, documents and tokens) are **for illustration only**
+> and **are not valid data**.
+
 ## Start here
 
 | Step | Page | What you learn |
@@ -16,6 +19,7 @@
 | 5 | [Shipment Tracking](api-rastreio.md) | Follow the shipment until delivery |
 | 6 | [Shipment Documents](api-documentos.md) | Download the AWB, invoice and other documents |
 | 7 | [Pickup Scheduling](api-agendamento.md) | Request the pickup of the package at your address |
+| 8 | [Error Codes](api-codigos-de-erro.md) | Handle each error message returned by the API |
 
 ## The main flow
 
@@ -52,14 +56,30 @@ Quotation  ──►  Shipment  ──►  Tracking  ──►  Documents  ─�
 ### Introduction
 - [Getting Started](api-primeiros-passos.md)
 - [Quotation & Shipment: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Error Codes](api-codigos-de-erro.md)
 
 ### Quotation
-- [Quotation](api-cotacao-v1.md)
-- [Quotation V2](api-cotacao-v2.md)
+- [Quotation (v1)](api-cotacao-v1.md)
+  - [Document Quotation](api-cotacao-v1.md#document-quotation)
+  - [Package (Box) Quotation — simple](api-cotacao-v1.md#package-box-quotation--simple)
+  - [Package (Box) Quotation — advanced](api-cotacao-v1.md#package-box-quotation--advanced)
+  - [Pallet Quotation — by LWH](api-cotacao-v1.md#pallet-quotation--by-lwh)
+  - [Pallet Quotation — by m³](api-cotacao-v1.md#pallet-quotation--by-m³)
+  - [Quotation with Kit](api-cotacao-v1.md#quotation-with-kit)
+  - [Quotations ineligible for shipment](api-cotacao-v1.md#quotations-ineligible-for-shipment)
+- [Quotation (v2)](api-cotacao-v2.md)
+  - [v2 quotation scenarios](api-cotacao-v2.md#quotation-scenarios)
+  - [Items Quotation (exclusive to v2)](api-cotacao-v2.md#items-quotation)
+  - [Quotations ineligible for shipment](api-cotacao-v2.md#quotations-ineligible-for-shipment)
+- [Difference between Quotation v1 and v2](api-comparativo-cotacao-remessa.md#quotation-comparison)
 
 ### Shipment
-- [Shipment](api-remessa-v1.md)
-- [Shipment V2](api-remessa-v2.md)
+- [Shipment (v1 quotation)](api-remessa-v1.md)
+  - [Quotations ineligible for shipment](api-remessa-v1.md#quotations-ineligible-for-shipment)
+  - [Update shipment](api-remessa-v1.md#endpoint-update-shipment)
+  - [Cancel shipment](api-remessa-v1.md#endpoint-cancel-shipment)
+- [Shipment (v2 quotation)](api-remessa-v2.md)
+- [Difference between Shipment v1 and v2](api-comparativo-cotacao-remessa.md#shipment-comparison)
 - [Manifest](api-manifesto.md)
 - [Draft](api-rascunho.md)
 

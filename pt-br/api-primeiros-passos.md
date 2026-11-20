@@ -2,6 +2,9 @@
 
 - [Voltar ao README do idioma](README.md)
 
+> ⚠️ **Exemplos meramente ilustrativos:** todos os payloads, respostas, identificadores, códigos, documentos e tokens
+> desta página são fictícios e **não são dados válidos**. Substitua-os pelos dados reais da sua conta e da sua operação.
+
 ## Visão geral
 Esta página reúne tudo que é comum a **todos** os endpoints da API Pública da Shipsmart Global:
 ambientes, autenticação, idioma, formato de resposta, versionamento e tratamento de erros.
@@ -41,8 +44,8 @@ Authorization: Bearer SEU_TOKEN
 
 | Status | Resposta | Significado |
 |---|---|---|
-| `404` | `{"status":"warning","message":"..."}` | Token não encontrado/inválido |
-| `403` | `{"status":"warning","message":"..."}` | Conta bloqueada |
+| `404` | `{"status":"warning","message":"Nenhum usuário encontrado para o token especificado!"}` | Token ausente, não encontrado ou inválido |
+| `403` | `{"status":"warning","message":"Usuário especificado encontra-se bloqueado em nosso sistema!"}` | Conta bloqueada |
 | `403` | `{"status":"warning","message":"Has no permission!"}` | O token é válido, mas o seu perfil não tem permissão para a ação |
 
 > As permissões são granulares por ação (cotar, remeter, cancelar, listar documentos, agendar coleta etc.).
@@ -60,7 +63,8 @@ As mensagens de sucesso, aviso e erro são traduzidas conforme o header `lang`.
 lang: en
 ```
 
-> O header é opcional. Se não enviado (ou enviado com valor desconhecido), a API responde em português.
+> O header é opcional. Se não for enviado, a API responde em português. Se for enviado com um valor
+> não suportado (ex.: `fr`), as mensagens vêm em inglês.
 
 > **Sobre os exemplos deste guia:** todas as mensagens de resposta reproduzidas nas páginas seguintes
 > usam o idioma padrão da API (`pt`). Enviando `lang: en` ou `lang: es`, o texto de `message` vem
@@ -73,8 +77,8 @@ lang: en
 | `Content-Type` | `application/json` |
 | `Accept` | `application/json` |
 | Codificação | UTF-8 |
-| Datas (resposta) | `Y-m-d H:i:s` |
-| Datas (agendamento) | `Y-m-d` para data e `H:i:s` para hora |
+| Datas (resposta) | `AAAA-MM-DD HH:MM:SS` |
+| Datas (agendamento) | `AAAA-MM-DD` para data e `HH:MM:SS` para hora |
 | Moedas | Código ISO 4217 com 3 letras (ex.: `BRL`, `USD`, `EUR`) |
 | Países | Código ISO 3166-1 alpha-2 com 2 letras (ex.: `BR`, `US`, `PT`) |
 | Separador decimal | Ponto (`.`) — nunca vírgula |
@@ -101,7 +105,7 @@ GET /quotation  →  308  →  GET /v1/quotation
 
 ### Compatibilidade entre versões
 Uma cotação criada na v1 **só** pode gerar remessa na v1, e uma cotação criada na v2 **só** pode gerar
-remessa na v2. Misturar versões retorna `422` com a mensagem
+remessa na v2. Misturar versões retorna `422` com a mensagem (em `data.quotation`)
 `Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cotação pode ter sido gerada em uma versão diferente da API.`
 
 Veja [Cotação & Remessa: v1 vs v2](api-comparativo-cotacao-remessa.md) para escolher a versão.
@@ -129,17 +133,18 @@ Todas as respostas seguem o mesmo envelope:
 | `status` | HTTP típico | Leitura |
 |---|---|---|
 | `success` | `200` | A operação foi aceita/concluída |
-| `warning` | `400`, `403`, `404`, `406`, `422` | Regra de negócio ou validação impediu a operação. **O payload precisa ser corrigido** |
-| `error` | `500` | Falha inesperada do lado do servidor. Tente novamente; se persistir, acione o suporte |
+| `warning` | `400`, `401`, `403`, `404`, `406`, `422` | Regra de negócio ou validação impediu a operação. **O payload precisa ser corrigido** |
+| `error` | `500` (e algumas recusas de peso/transportador com `400`/`404`) | Falha inesperada ou recusa do transportador. Leia `message`; erros `500` podem ser repetidos |
 
 ## Erros de validação (`422`)
 
 Quando um campo não passa na validação, a resposta traz `data` com o mapa `campo → lista de mensagens`.
+A `message` de topo é **genérica** (não descreve o erro): use sempre o conteúdo de `data`.
 
 ```json
 {
   "status": "warning",
-  "message": "Validation Error",
+  "message": "Oopss.. Algo inesperado aconteceu. Tente novamente mais tarde. Caso o erro persista, acione a equipe técnica!",
   "data": {
     "object": ["O campo object é obrigatório."],
     "address_sender.country_code": [
@@ -158,46 +163,68 @@ Quando um campo não passa na validação, a resposta traz `data` com o mapa `ca
 | Status | Quando acontece | O que fazer |
 |---|---|---|
 | `200` | Requisição aceita/processada | Seguir o fluxo |
-| `400` | Regra de negócio bloqueou a operação (ex.: tipo de pagamento inexistente, cotação expirada, nenhum transportador elegível) | Ler `message` e corrigir o cenário |
-| `403` | Sem permissão ou conta bloqueada | Solicitar liberação ao suporte |
-| `404` | Recurso não encontrado (token, remessa, contrato não listado na cotação) | Conferir o identificador informado |
-| `406` | Estrutura do payload incompatível com o esperado | Revisar tipos e aninhamento dos campos |
-| `422` | Falha de validação de campos | Corrigir os campos listados em `data` |
+| `308` | Chamada sem prefixo de versão | Usar `/v1/...` ou `/v2/...` |
+| `400` | Regra de negócio bloqueou a operação (ex.: documento fiscal inválido, caixa sem item, CEP inválido) | Ler `message` e corrigir o cenário |
+| `401` | Tipo de pagamento não habilitado para a conta | Habilitar a opção de pagamento ou usar outro tipo |
+| `403` | Sem permissão, conta bloqueada, cotação simples ou expirada na remessa | Solicitar liberação ao suporte / refazer a cotação |
+| `404` | Recurso não encontrado (token, cotação de outra conta, remessa, contrato não listado na cotação, endereço) | Conferir o identificador informado |
+| `406` | Conflito de negócio (cotação já usada, endereço cadastrado incompatível, carga que exige atendimento personalizado) | Ler `message` e ajustar o fluxo |
+| `422` | Falha de validação de campos, ou regra de negócio sobre dados (ex.: HS Code sem tabela de imposto, conta só DDP) | Corrigir os campos listados em `data` / ler `message` |
 | `500` | Erro inesperado | Repetir com backoff; se persistir, acionar o suporte |
 
 ## Predefinições da conta (presets)
 
-Algumas opções podem ficar **pré-configuradas na sua conta** no painel. Quando configuradas, elas são
-aplicadas automaticamente na cotação e na remessa, e você pode omitir o campo no payload.
+Algumas opções podem ficar **pré-configuradas na sua conta** no painel. Elas são aplicadas pela API depois da
+validação do payload, com regras diferentes por campo:
 
-| Preset | Afeta | Observação |
+| Predefinição | Afeta | Como é aplicada |
 |---|---|---|
-| Canal de venda (`channel_code`) | Cotação | Usado quando você não informa o canal |
-| Imposto (`tax`) | Cotação | `sender` ou `receiver` |
-| Seguro (`insurance`) | Cotação | - |
-| Objeto (`object`) e tipo (`type`) | Cotação | - |
-| Moedas (`currency_quote`, `currency_payment`) | Cotação | - |
-| Sistema de medida (`measurement`) | Cotação | `metric` ou `imperial` |
-| Entrega residencial / não empilhável | Cotação | - |
-| Endereço do remetente | Cotação e remessa | Aplicado como `address_code` |
-| Frete declarado (`declared_freight`) | Cotação | Valor + moeda |
-| Faturante (`biller`) | Remessa | Endereço exibido na invoice |
-| Agrupamento de caixas | Cotação | `default`, `all_in_one` ou `smartbox` |
+| Imposto (`tax`) | Cotação, Manifesto, Rascunho | **Substitui** o `tax` enviado. Países de destino configurados como exceção recebem o oposto do padrão. Se a conta estiver **travada em DDP**, o imposto é sempre `sender` |
+| Seguro automático | Cotação, Manifesto | Contrata o seguro quando o valor declarado (convertido para USD) atinge o mínimo configurado, mesmo com `insurance: false` |
+| Canal de venda (`channel_code`) | Cotação, Manifesto, Rascunho | Usado quando o campo não é enviado |
+| Sistema de medida (`measurement`) | Cotação, Manifesto, Rascunho | Usado quando o campo não é enviado; na falta dele, `metric` |
+| Entrega residencial / não empilhável | Cotação, Rascunho | Usados quando os campos não são enviados |
+| Frete declarado (`declared_freight`) | Cotação, Manifesto, Rascunho | Usado quando o campo não é enviado. Exige a permissão de frete declarado |
+| Agrupamento de caixas | Cotação v2 (`type: items`) | Define como as caixas são montadas (ver abaixo). Não é um campo do payload |
+| Centro de custo (`cost_center_code`) | Remessa v1/v2, Manifesto, Rascunho | Usado quando o campo não é enviado **ou é enviado vazio/nulo** |
+| Finalidade do envio (`type` da remessa) | Remessa v1/v2, Rascunho | Usada quando o campo não é enviado |
+| Faturante (`biller`) | Remessa v1/v2, Manifesto, Rascunho | Usado quando o campo não é enviado (ou vem vazio) e a conta está configurada para exibir faturante |
+| Notificação de cobrança (`payment_notify_shipping_billing`) | Remessa v1/v2 | Usada quando o campo não é enviado |
+| Coleta automática | Remessa | Cria o agendamento de coleta automaticamente (ver [Agendamento de Coleta](api-agendamento.md)) |
 
-**Precedência:** o que você envia no payload sempre vence o preset. Exceções:
-- Se você informar `address_sender.country_code` na cotação, o preset de endereço do remetente é descartado.
-- Se você informar `address_sender.street` na remessa, o preset de endereço do remetente é descartado.
-- Se você informar `declared_freight`, o preset de frete declarado é descartado.
+**Precedência:** exceto pelo **imposto** (que sempre segue a predefinição, quando configurada), o que você envia
+no payload vence a predefinição. Campos obrigatórios do payload (`object`, `type`, `insurance`, moedas,
+`address_sender`) precisam ser enviados sempre — a predefinição não os dispensa.
+
+> O endereço de remetente pré-configurado no painel **não** substitui o `address_sender` da API.
+> Para reaproveitar um endereço cadastrado, envie `address_sender.address_code`.
 
 ### Agrupamento de caixas
-O agrupamento define como os itens são distribuídos nas caixas quando você usa `type: items`.
+O agrupamento define como os itens são distribuídos nas caixas quando você usa `type: items`
+(cotação por itens, **exclusiva da v2**).
 Ele **não** é um campo do payload: é uma configuração da sua conta.
 
 | Modo | Comportamento |
 |---|---|
-| `default` | Agrupamento padrão da plataforma |
-| `all_in_one` | Consolida tudo em uma única caixa |
-| `smartbox` | Encaixa os itens nas caixas cadastradas considerando volume e dimensões (com 10% de folga) e respeitando `is_groupable` do item |
+| `default` | Cada item usa a caixa vinculada ao seu cadastro (`box_code`/`box_identifier`); itens agrupáveis com a mesma caixa são reunidos e itens não agrupáveis recebem uma caixa por unidade |
+| `all_in_one` | Consolida os itens agrupáveis em uma única caixa virtual com o volume total (a partir das dimensões cadastradas); itens não agrupáveis recebem uma caixa por unidade |
+| `smartbox` | Encaixa os itens nas caixas **enviadas em `boxes[]`** (obrigatório), considerando volume e dimensões com 10% de folga e respeitando `is_groupable`/`is_foldable` do item |
+
+Exemplos de cada modo em [Cotação de Itens](api-cotacao-v2.md#cotação-de-itens).
+
+## Cadastros feitos no painel
+
+Alguns códigos usados nos payloads vêm de cadastros mantidos **no painel da Shipsmart Global** (não há endpoint
+público para criá-los). Eles precisam existir, estar ativos e pertencer à sua conta (ou às contas autorizadas):
+
+| Cadastro | Campo no payload | Onde é usado |
+|---|---|---|
+| Endereço | `address_sender.address_code`, `address_receiver.address_code`, `manufacturer.address_code`, `biller.address_code` | Cotação, Remessa, Manifesto, Rascunho |
+| Canal de venda | `channel_code` | Cotação, Manifesto, Rascunho, consultas e cancelamento por canal |
+| Centro de custo | `cost_center_code` | Remessa (criação e atualização), Manifesto, Rascunho |
+| Kit | `boxes[].kit` | Cotação, Manifesto, Rascunho |
+
+Caixas e itens também podem ser cadastrados pela API: veja [Caixa](api-caixa-v1.md) e [Itens](api-itens-v1.md).
 
 ## Moedas aceitas
 
@@ -255,3 +282,4 @@ Resposta:
 - [Cotação](api-cotacao-v1.md) ou [Cotação V2](api-cotacao-v2.md)
 - [Remessa](api-remessa-v1.md) ou [Remessa V2](api-remessa-v2.md)
 - [Cotação & Remessa: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Códigos de Erro](api-codigos-de-erro.md)

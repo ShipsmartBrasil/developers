@@ -1,30 +1,37 @@
 # Cotización y Envío: v1 vs v2
 
 - [Volver al README del idioma](README.md)
-- Prerrequisito: [Primeros Pasos](api-primeiros-passos.md)
+- Requisito previo: [Primeros Pasos](api-primeiros-passos.md)
+
+> ⚠️ **Ejemplos meramente ilustrativos:** todos los payloads, respuestas, identificadores, códigos, documentos y tokens
+> de esta página son ficticios y **no son datos válidos**. Sustitúyelos por los datos reales de tu cuenta y de tu operación.
 
 ## Visión general
-Existen dos versiones publicadas para el par **cotización + envío**. Usan el **mismo motor de cálculo**
-y los **mismos transportistas**. La diferencia está en **cuándo** informas la dirección completa.
+Existen dos versiones publicadas para el par **cotización + envío**. Usan el **mismo cálculo**
+y los **mismos transportistas**. Las diferencias están en **cuándo** informas la dirección completa y en
+**cómo** describes la carga: solo la v2 acepta la cotización por artículos, sin informar las cajas.
 
 | | v1 | v2 |
 |---|---|---|
 | Dirección completa | Informada **en la cotización** | Informada **en el envío** |
 | Payload de la cotización | País + ciudad + código postal/estado | Solo el país (+ estado opcional) |
+| Cotización por artículos (`type: items`) | No disponible: cajas siempre informadas | **Disponible**: solo el `sku` de los artículos registrados |
 | Payload del envío | Calle, nombre, contacto | Calle, nombre, contacto **+ ciudad, estado, código postal** |
+| Validación de la dirección | En la cotización | En el envío |
 | Ciclo operativo completo | Sí, en `/v1` | Creación en `/v2`, resto en `/v1` |
 
 ## En una frase
 
 > **Usa la v1** si, en el momento de cotizar, ya sabes a qué ciudad/código postal vas a enviar.
-> **Usa la v2** si, en el momento de cotizar, solo sabes el país de destino.
+> **Usa la v2** si, en el momento de cotizar, solo sabes el país de destino **o** quieres cotizar solo por los SKU
+> registrados, sin informar las cajas.
 
 ## Regla de oro: no mezcles versiones
 
 Una cotización creada en la v1 **solo** genera un envío en `POST /v1/shipping`.
 Una cotización creada en la v2 **solo** genera un envío en `POST /v2/shipping`.
 
-Mezclarlas retorna `422`:
+Mezclarlas retorna `422`, con el siguiente mensaje en `data.quotation`:
 ```
 Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cotação pode ter sido gerada em uma versão diferente da API.
 ```
@@ -34,24 +41,28 @@ Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cota
 | Tema | v1 (`POST /v1/quotation`) | v2 (`POST /v2/quotation`) |
 |---|---|---|
 | `address_*.country_code` | Obligatorio | Obligatorio |
-| `address_*.city` | **Obligatorio** | No aceptado |
-| `address_*.postal_code` | Obligatorio (o `state`) | No aceptado |
-| `address_*.state` | Obligatorio (o `state_code`/`postal_code`) | No aceptado |
+| `address_*.city` | **Obligatorio** | Ignorado |
+| `address_*.postal_code` | Obligatorio (o `state`); **siempre obligatorio en Brasil** | Ignorado |
+| `address_*.state` | Obligatorio (o `state_code`/`postal_code`) | Ignorado |
 | `address_*.state_code` | Obligatorio (o `state`/`postal_code`) | **Opcional** (mejora la precisión) |
 | `object` | `doc`, `package`, `pallet`, `not_doc` | Idéntico |
-| `type` | `simple`, `advanced`, `items` | Idéntico |
-| `boxes[]` (incl. `kit`, `volume`) | Soportado | Idéntico |
-| `items[]` | Soportado | Idéntico, **sin** `selling_unit_value` |
+| `type` | `simple`, `advanced` | `simple`, `advanced` **y `items`** (exclusivo de la v2) |
+| `boxes[]` (incl. `kit`, `volume`) | **Siempre obligatorio** | Obligatorio, excepto en `type: items` (según la agrupación de la cuenta) |
+| `items[]` (incl. `ean`, `nsmp`) | Soportado | Idéntico, **sin** `selling_unit_value` |
 | `ior` (Importer of Record) | Soportado | **No forma parte del contrato** |
 | `declared_freight` | Soportado | Idéntico |
 | `manufacturer` | Soportado | Idéntico |
 | `level` (`simple`/`detailed`) | Soportado | Idéntico |
+| Validación de la dirección (código postal, ciudad, estado) | En la cotización | No hay (se hace en el envío) |
 | Consultar el resultado después | `GET /v1/quotation/{quotation}/{level}` | **No existe** |
 | Warnings aduaneros | Soportado | Idéntico |
+| Predefiniciones de la cuenta (impuesto, seguro automático, etc.) | Aplicadas | Idéntico |
+| Escenarios (documento, paquete, pallet, artículos, kit) | [Escenarios de la v1](api-cotacao-v1.md#escenarios-de-cotización) | [Escenarios de la v2](api-cotacao-v2.md#escenarios-de-cotización) |
 
 ### Impacto práctico en la cotización
 - **Precisión:** en la v1, la ciudad y el código postal permiten aplicar tasas y restricciones regionales **ya en el cálculo**.
-  En la v2, el valor puede refinarse cuando la dirección completa entra en el envío.
+  En la v2, el cálculo considera país y estado; la dirección completa entra solo en el envío.
+- **Errores de dirección:** en la v1 aparecen en la cotización; en la v2 aparecen en el envío.
 - **Reconsulta:** la v2 no tiene endpoint de reconsulta. **Guarda la respuesta del `POST`** si necesitas
   volver a mostrar la cotización al usuario.
 
@@ -62,14 +73,17 @@ Não é possivel finalizar, pois seu quotation pode estar inválido ou esta cota
 | `quotation` | Cotización v1 | Cotización v2 |
 | `carrier_code` / `slug` | Uno de los dos | Idéntico |
 | `address_*.street`, `name`, `email`, `phone`, `type` | Obligatorios | Idénticos |
-| `address_*.city` | No aceptado | **Obligatorio** (mín. 3, máx. 100) |
-| `address_*.postal_code` | No aceptado | **Obligatorio** (o `state`) |
-| `address_*.state` / `state_code` | No aceptados | **Obligatorios** (uno de ellos, o `postal_code`) |
+| `address_*.city` | Ignorado (viene de la cotización) | **Obligatorio** (mín. 3, máx. 100) |
+| `address_*.postal_code` | Ignorado | **Obligatorio** si no se envía `state` |
+| `address_*.state` | Ignorado | **Obligatorio** si no se envía `postal_code` |
+| `address_*.state_code` | Ignorado | Opcional; prevalece el de la cotización |
+| `address_*.address_code` | Debe coincidir con la dirección de la cotización | Solo funciona si la cotización v2 usó el mismo `address_code` |
 | `payment.type` | `billed`, `gateway`, `afterward` | Idéntico |
 | `nfkey`, `invoice_number`, `shipment_reference` | Soportados | Idénticos |
 | `cost_center_code`, `payment_notify_shipping_billing` | Soportados | Idénticos |
 | `attachments` | Soportado | Idéntico |
 | `biller` | Soportado | Idéntico, con localidad validada |
+| Elegibilidad de la cotización | [No elegibles v1](api-remessa-v1.md#cotizaciones-no-elegibles-para-envío) | [No elegibles v2](api-remessa-v2.md#cotizaciones-no-elegibles-para-envío) |
 
 ## Operaciones posteriores a la creación
 
@@ -162,7 +176,7 @@ versión en la que se creó el envío.
     "street": "Main Avenue",
     "name": "John Doe",
     "email": "johndoe@example.com",
-    "phone": "11992494597",
+    "phone": "13055550100",
     "type": "pf"
   },
   "payment": { "type": "billed" }
@@ -189,11 +203,10 @@ versión en la que se creó el envío.
   "address_receiver": {
     "postal_code": "33101",
     "city": "Miami",
-    "state_code": "FL",
     "street": "Main Avenue",
     "name": "John Doe",
     "email": "johndoe@example.com",
-    "phone": "11992494597",
+    "phone": "13055550100",
     "type": "pf"
   },
   "payment": { "type": "billed" }
@@ -216,6 +229,9 @@ Responde a las preguntas en orden:
 4. **¿Quieres el mayor nivel de precisión de impuestos ya en la cotización?**
    - Sí → **v1**
    - No → cualquiera
+5. **¿Quieres cotizar solo con los SKU registrados, sin informar las cajas?**
+   - Sí → **v2** ([Cotización de Artículos](api-cotacao-v2.md#cotización-de-artículos))
+   - No → cualquiera
 
 ### Escenarios típicos
 
@@ -226,6 +242,7 @@ Responde a las preguntas en orden:
 | Marketplace que recibe el pedido completo vía webhook | **v1** | Todos los datos ya existen |
 | Integración B2B con despacho en lote | **v1** | Flujo operativo completo en la misma versión |
 | Simulación en landing page internacional | **v2** | Payload mínimo, menos fricción |
+| ERP con catálogo de productos ya registrado | **v2** | Cotización por artículos: solo SKU y cantidad, la plataforma arma las cajas |
 | Cotización + envío + documentos en una sola llamada | **[Manifiesto](api-manifesto.md)** | Flujo sincrónico, independiente de v1/v2 |
 
 ## Otras formas de hacer un envío
@@ -242,3 +259,4 @@ Además del par cotización + envío, existen dos flujos alternativos:
   genere el envío en su propia versión**.
 - Los endpoints de apoyo ([Caja](api-caixa-v1.md), [Artículos](api-itens-v1.md),
   [Contrato](api-contrato-v1.md)) son compartidos y existen solo en `/v1`.
+- Lista consolidada de mensajes de error: [Códigos de Error](api-codigos-de-erro.md).

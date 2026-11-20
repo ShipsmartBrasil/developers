@@ -5,6 +5,9 @@
 
 - [Retour au README principal](../README.md)
 
+> ⚠️ Tous les exemples de ce guide (payloads, réponses, codes, documents et tokens) sont **purement illustratifs**
+> et **ne sont pas des données valides**.
+
 ## Commencez par ici
 
 | Étape | Page | Ce que vous apprenez |
@@ -16,6 +19,7 @@
 | 5 | [Suivi de l'Expédition](api-rastreio.md) | Suivre l'envoi jusqu'à la livraison |
 | 6 | [Documents de l'Expédition](api-documentos.md) | Télécharger l'AWB, l'invoice et les autres documents |
 | 7 | [Planification d'Enlèvement](api-agendamento.md) | Demander le retrait du colis à votre adresse |
+| 8 | [Codes d'Erreur](api-codigos-de-erro.md) | Traiter chaque message d'erreur de l'API |
 
 ## Le flux principal
 
@@ -52,14 +56,30 @@ Cotation  ──►  Expédition  ──►  Suivi  ──►  Documents  ──
 ### Introduction
 - [Premiers Pas](api-primeiros-passos.md)
 - [Cotation & Expédition : v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Codes d'Erreur](api-codigos-de-erro.md)
 
 ### Cotation
-- [Cotation](api-cotacao-v1.md)
-- [Cotation V2](api-cotacao-v2.md)
+- [Cotation (v1)](api-cotacao-v1.md)
+  - [Cotation de Document](api-cotacao-v1.md#cotation-de-document)
+  - [Cotation de Colis (Boîte) — simple](api-cotacao-v1.md#cotation-de-colis-boîte--simple)
+  - [Cotation de Colis (Boîte) — avancée](api-cotacao-v1.md#cotation-de-colis-boîte--avancée)
+  - [Cotation de Palette — par LLH](api-cotacao-v1.md#cotation-de-palette--par-llh)
+  - [Cotation de Palette — par m³](api-cotacao-v1.md#cotation-de-palette--par-m³)
+  - [Cotation avec Kit](api-cotacao-v1.md#cotation-avec-kit)
+  - [Cotations non éligibles à l'expédition](api-cotacao-v1.md#cotations-non-éligibles-à-lexpédition)
+- [Cotation (v2)](api-cotacao-v2.md)
+  - [Scénarios de cotation v2](api-cotacao-v2.md#scénarios-de-cotation)
+  - [Cotation d'Articles (exclusive à la v2)](api-cotacao-v2.md#cotation-darticles)
+  - [Cotations non éligibles à l'expédition](api-cotacao-v2.md#cotations-non-éligibles-à-lexpédition)
+- [Différence entre Cotation v1 et v2](api-comparativo-cotacao-remessa.md#comparatif-de-la-cotation)
 
 ### Expédition
-- [Expédition](api-remessa-v1.md)
-- [Expédition V2](api-remessa-v2.md)
+- [Expédition (cotation v1)](api-remessa-v1.md)
+  - [Cotations non éligibles à l'expédition](api-remessa-v1.md#cotations-non-éligibles-à-lexpédition)
+  - [Mettre à jour une expédition](api-remessa-v1.md#endpoint--mettre-à-jour-une-expédition)
+  - [Annuler une expédition](api-remessa-v1.md#endpoint--annuler-une-expédition)
+- [Expédition (cotation v2)](api-remessa-v2.md)
+- [Différence entre Expédition v1 et v2](api-comparativo-cotacao-remessa.md#comparatif-de-lexpédition)
 - [Manifeste](api-manifesto.md)
 - [Brouillon](api-rascunho.md)
 
@@ -123,7 +143,7 @@ Cotation  ──►  Expédition  ──►  Suivi  ──►  Documents  ──
 
 ## Environnements
 
-| Environnement | Base URL | Documentation interactive |
+| Environnement | URL de base | Documentation interactive |
 |---|---|---|
 | Production | `https://api.shipsmart.global` | `https://api.shipsmart.global/doc` |
 | Préproduction | `https://hmlapi.shipsmart.com.br` | `https://hmlapi.shipsmart.com.br/doc` |

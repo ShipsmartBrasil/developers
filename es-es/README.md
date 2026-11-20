@@ -5,17 +5,21 @@
 
 - [Volver al README principal](../README.md)
 
+> ⚠️ Todos los ejemplos de esta guía (payloads, respuestas, códigos, documentos y tokens) son **meramente ilustrativos**
+> y **no son datos válidos**.
+
 ## Empieza por aquí
 
 | Paso | Página | Lo que aprendes |
 |---|---|---|
-| 1 | [Primeros Pasos](api-primeiros-passos.md) | Entornos, autenticación, idioma, formato de respuesta, errores y preajustes |
+| 1 | [Primeros Pasos](api-primeiros-passos.md) | Entornos, autenticación, idioma, formato de respuesta, errores y predefiniciones |
 | 2 | [Cotización y Envío: v1 vs v2](api-comparativo-cotacao-remessa.md) | Qué versión usar en tu integración |
 | 3 | [Cotización](api-cotacao-v1.md) | Calcular flete, seguro e impuestos |
 | 4 | [Envío](api-remessa-v1.md) | Transformar la cotización en un envío real |
 | 5 | [Seguimiento del Envío](api-rastreio.md) | Acompañar el envío hasta la entrega |
 | 6 | [Documentos del Envío](api-documentos.md) | Descargar AWB, invoice y demás documentos |
 | 7 | [Programación de Recogida](api-agendamento.md) | Solicitar la retirada del bulto en tu dirección |
+| 8 | [Códigos de Error](api-codigos-de-erro.md) | Tratar cada mensaje de error de la API |
 
 ## El flujo principal
 
@@ -52,14 +56,30 @@ Cotización  ──►  Envío  ──►  Seguimiento  ──►  Documentos  �
 ### Introducción
 - [Primeros Pasos](api-primeiros-passos.md)
 - [Cotización y Envío: v1 vs v2](api-comparativo-cotacao-remessa.md)
+- [Códigos de Error](api-codigos-de-erro.md)
 
 ### Cotización
-- [Cotización](api-cotacao-v1.md)
-- [Cotización V2](api-cotacao-v2.md)
+- [Cotización (v1)](api-cotacao-v1.md)
+  - [Cotización de Documento](api-cotacao-v1.md#cotización-de-documento)
+  - [Cotización de Paquete (Caja) — simple](api-cotacao-v1.md#cotización-de-paquete-caja--simple)
+  - [Cotización de Paquete (Caja) — avanzada](api-cotacao-v1.md#cotización-de-paquete-caja--avanzada)
+  - [Cotización de Pallet — por LAA](api-cotacao-v1.md#cotización-de-pallet--por-laa)
+  - [Cotización de Pallet — por m³](api-cotacao-v1.md#cotización-de-pallet--por-m³)
+  - [Cotización con Kit](api-cotacao-v1.md#cotización-con-kit)
+  - [Cotizaciones no elegibles para envío](api-cotacao-v1.md#cotizaciones-no-elegibles-para-envío)
+- [Cotización (v2)](api-cotacao-v2.md)
+  - [Escenarios de cotización v2](api-cotacao-v2.md#escenarios-de-cotización)
+  - [Cotización de Artículos (exclusiva de la v2)](api-cotacao-v2.md#cotización-de-artículos)
+  - [Cotizaciones no elegibles para envío](api-cotacao-v2.md#cotizaciones-no-elegibles-para-envío)
+- [Diferencia entre Cotización v1 y v2](api-comparativo-cotacao-remessa.md#comparativo-de-la-cotización)
 
 ### Envío
-- [Envío](api-remessa-v1.md)
-- [Envío V2](api-remessa-v2.md)
+- [Envío (cotización v1)](api-remessa-v1.md)
+  - [Cotizaciones no elegibles para envío](api-remessa-v1.md#cotizaciones-no-elegibles-para-envío)
+  - [Actualizar envío](api-remessa-v1.md#endpoint-actualizar-envío)
+  - [Cancelar envío](api-remessa-v1.md#endpoint-cancelar-envío)
+- [Envío (cotización v2)](api-remessa-v2.md)
+- [Diferencia entre Envío v1 y v2](api-comparativo-cotacao-remessa.md#comparativo-del-envío)
 - [Manifiesto](api-manifesto.md)
 - [Borrador](api-rascunho.md)
 
@@ -123,7 +143,7 @@ Cotización  ──►  Envío  ──►  Seguimiento  ──►  Documentos  �
 
 ## Entornos
 
-| Entorno | Base URL | Documentación interactiva |
+| Entorno | URL base | Documentación interactiva |
 |---|---|---|
 | Producción | `https://api.shipsmart.global` | `https://api.shipsmart.global/doc` |
 | Homologación | `https://hmlapi.shipsmart.com.br` | `https://hmlapi.shipsmart.com.br/doc` |
